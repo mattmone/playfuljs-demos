@@ -1,0 +1,23 @@
+{
+  "name": "playfuljs-demos",
+  "version": "1.0.0",
+  "description": "To extend a PlayfulJS demo, just fork this repository.\r If you make something cool,\r [email](mailto:hunter@hunterloftis.com) or [tweet](http://twitter.com/hunterloftis)\r me a link so I can announce it from playfuljs.com!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattmone/playfuljs-demos.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattmone/playfuljs-demos/issues"
+  },
+  "homepage": "https://github.com/mattmone/playfuljs-demos#readme",
+  "devDependencies": {
+    "@web/dev-server": "^0.1.17"
+  }
+}
