@@ -3,8 +3,8 @@ import { CIRCLE, MOBILE } from './constants.js';
 export class Camera {
   constructor(canvas, resolution, focalLength) {
     this.ctx = canvas.getContext('2d');
-    this.width = canvas.width = window.innerWidth * 0.5;
-    this.height = canvas.height = window.innerHeight * 0.5;
+    this.width = canvas.width = window.innerWidth;
+    this.height = canvas.height = window.innerHeight;
     this.resolution = resolution;
     this.spacing = this.width / resolution;
     this.focalLength = focalLength || 0.8;
