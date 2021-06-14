@@ -17,6 +17,7 @@ export class Camera {
     this.drawSky(player.direction, map.skybox, map.light);
     this.drawColumns(player, map);
     this.drawWeapon(player.weapon, player.paces);
+    this.drawMinimap(player, map);
   }
 
   drawSky(direction, sky, ambient) {
@@ -72,8 +73,8 @@ export class Camera {
 
     for (let s = ray.length - 1; s >= 0; s--) {
       const step = ray[s];
-      let rainDrops = Math.pow(Math.random(), 3) * s;
-      const rain = rainDrops > 0 && this.project(0.1, angle, step.distance);
+      // let rainDrops = Math.pow(Math.random(), 3) * s;
+      // const rain = rainDrops > 0 && this.project(0.1, angle, step.distance);
 
       if (s === hit) {
         const textureX = Math.floor(texture.width * step.offset);
@@ -99,8 +100,33 @@ export class Camera {
 
       ctx.fillStyle = '#ffffff';
       ctx.globalAlpha = 0.15;
-      while (--rainDrops > 0) ctx.fillRect(left, Math.random() * rain.top, 1, rain.height);
+      // while (--rainDrops > 0) ctx.fillRect(left, Math.random() * rain.top, 1, rain.height);
     }
+  }
+
+  drawMinimap(player, { size, minimap, getPoint }) {
+    const mapSizeModifier = 5;
+    const width = size * mapSizeModifier;
+    const height = size * mapSizeModifier;
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    this.ctx.fillRect(this.width - width, 0, width, height);
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    minimap.forEach((cell, index) => {
+      if (cell === 1)
+        this.ctx.fillRect(
+          this.width - mapSizeModifier - (index % size) * mapSizeModifier,
+          Math.floor(index / size) * mapSizeModifier,
+          mapSizeModifier,
+          mapSizeModifier,
+        );
+    });
+    this.ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+    this.ctx.fillRect(
+      this.width - mapSizeModifier / 2 - player.x * mapSizeModifier,
+      player.y * mapSizeModifier,
+      mapSizeModifier,
+      mapSizeModifier,
+    );
   }
 
   project(height, angle, distance) {

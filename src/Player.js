@@ -21,16 +21,16 @@ export class Player {
   walk(distance, map) {
     const dx = Math.cos(this.direction) * distance;
     const dy = Math.sin(this.direction) * distance;
-    if (map.get(this.x + dx, this.y) <= 0) this.x += dx;
-    if (map.get(this.x, this.y + dy) <= 0) this.y += dy;
+    if (map.getPoint(this.x + dx, this.y) <= 0) this.x += dx;
+    if (map.getPoint(this.x, this.y + dy) <= 0) this.y += dy;
     this.paces += distance;
   }
 
   strafe(distance, map) {
     const dx = Math.cos(this.perpendicular) * distance;
     const dy = Math.sin(this.perpendicular) * distance;
-    if (map.get(this.x + dx, this.y) <= 0) this.x += dx;
-    if (map.get(this.x, this.y + dy) <= 0) this.y += dy;
+    if (map.getPoint(this.x + dx, this.y) <= 0) this.x += dx;
+    if (map.getPoint(this.x, this.y + dy) <= 0) this.y += dy;
     this.paces += distance;
   }
 
