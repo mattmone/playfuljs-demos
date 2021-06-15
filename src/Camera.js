@@ -69,39 +69,30 @@ export class Camera {
     const width = Math.ceil(this.spacing);
     let hit = -1;
 
-    while (++hit < ray.length && ray[hit].height <= 0);
+    // while (++hit < ray.length && ray[hit].height <= 0);
 
-    for (let s = ray.length - 1; s >= 0; s--) {
-      const step = ray[s];
-      // let rainDrops = Math.pow(Math.random(), 3) * s;
-      // const rain = rainDrops > 0 && this.project(0.1, angle, step.distance);
+    const step = ray.find(r => r.height > 0) ?? ray[0]; //ray[hit];
 
-      if (s === hit) {
-        const textureX = Math.floor(texture.width * step.offset);
-        const wall = this.project(step.height, angle, step.distance);
+    const textureX = Math.floor(texture.width * step.offset);
+    const wall = this.project(step.height, angle, step.distance);
 
-        ctx.globalAlpha = 1;
-        ctx.drawImage(
-          texture.image,
-          textureX,
-          0,
-          1,
-          texture.height,
-          left,
-          wall.top,
-          width,
-          wall.height,
-        );
+    ctx.globalAlpha = 1;
+    ctx.drawImage(
+      texture.image,
+      textureX,
+      0,
+      1,
+      texture.height,
+      left,
+      wall.top,
+      width,
+      wall.height,
+    );
+    map.setMiniMapPoint(step.x, step.y);
 
-        ctx.fillStyle = '#000000';
-        ctx.globalAlpha = Math.max((step.distance + step.shading) / this.lightRange - map.light, 0);
-        ctx.fillRect(left, wall.top, width, wall.height);
-      }
-
-      ctx.fillStyle = '#ffffff';
-      ctx.globalAlpha = 0.15;
-      // while (--rainDrops > 0) ctx.fillRect(left, Math.random() * rain.top, 1, rain.height);
-    }
+    ctx.fillStyle = '#000000';
+    ctx.globalAlpha = Math.max((step.distance + step.shading) / this.lightRange - map.light, 0);
+    ctx.fillRect(left, wall.top, width, wall.height);
   }
 
   drawMinimap(player, { size, minimap, getPoint }) {
@@ -123,7 +114,7 @@ export class Camera {
     this.ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
     this.ctx.fillRect(
       this.width - mapSizeModifier / 2 - player.x * mapSizeModifier,
-      player.y * mapSizeModifier,
+      (player.y - 0.5) * mapSizeModifier,
       mapSizeModifier,
       mapSizeModifier,
     );
