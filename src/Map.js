@@ -20,8 +20,12 @@ export class Map {
   setMiniMapPoint(x, y) {
     x = Math.floor(x);
     y = Math.floor(y);
-    if (x < 0 || x > this.size - 1 || y < 0 || y > this.size - 1) return -1;
-    return (this.minimap[y * this.size + x] = this.wallGrid[y * this.size + x]);
+    if (x < 0 || x > this.size || y < 0 || y > this.size) return -1;
+    this.minimap[y * this.size + x] = this.wallGrid[y * this.size + x];
+    // this.minimap[y * this.size + (x + 1)] = this.wallGrid[y * this.size + (x + 1)];
+    this.minimap[y * this.size + (x - 1)] = this.wallGrid[y * this.size + (x - 1)];
+    this.minimap[(y - 1) * this.size + x] = this.wallGrid[(y - 1) * this.size + x];
+    // this.minimap[(y + 1) * this.size + x] = this.wallGrid[(y + 1) * this.size + x];
   }
 
   randomize() {

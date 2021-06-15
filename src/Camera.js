@@ -67,11 +67,8 @@ export class Camera {
     const texture = map.wallTexture;
     const left = Math.floor(column * this.spacing);
     const width = Math.ceil(this.spacing);
-    let hit = -1;
 
-    // while (++hit < ray.length && ray[hit].height <= 0);
-
-    const step = ray.find(r => r.height > 0) ?? ray[0]; //ray[hit];
+    const step = ray.find(r => r.height > 0) ?? ray[0];
 
     const textureX = Math.floor(texture.width * step.offset);
     const wall = this.project(step.height, angle, step.distance);
@@ -96,9 +93,11 @@ export class Camera {
   }
 
   drawMinimap(player, { size, minimap, getPoint }) {
+    this.ctx.save();
     const mapSizeModifier = 5;
     const width = size * mapSizeModifier;
     const height = size * mapSizeModifier;
+    this.ctx.transform(1, 0, 0, -1, 0, this.height);
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
     this.ctx.fillRect(this.width - width, 0, width, height);
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
@@ -118,6 +117,7 @@ export class Camera {
       mapSizeModifier,
       mapSizeModifier,
     );
+    this.ctx.restore();
   }
 
   project(height, angle, distance) {
