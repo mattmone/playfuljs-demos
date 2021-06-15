@@ -6,7 +6,7 @@ export class Player {
     this.x = x;
     this.y = y;
     this.direction = direction;
-    this.weapon = new Bitmap('assets/knife_hand.png', 319, 320);
+    this.weapon = new Bitmap('./src/assets/knife_hand.png', 319, 320);
     this.paces = 0;
   }
 
