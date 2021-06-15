@@ -5,8 +5,8 @@ export class Map {
     this.size = size;
     this.wallGrid = new Uint8Array(size * size);
     this.minimap = new Uint8Array(size * size);
-    this.skybox = new Bitmap('./src/assets/deathvalley_panorama.jpg', 2000, 750);
-    this.wallTexture = new Bitmap('./src/assets/wall_texture.jpg', 1024, 1024);
+    this.skybox = new Bitmap('src/assets/deathvalley_panorama.jpg', 2000, 750);
+    this.wallTexture = new Bitmap('src/assets/wall_texture.jpg', 1024, 1024);
     this.light = 0;
   }
 
