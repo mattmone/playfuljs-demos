@@ -17,11 +17,11 @@ export class Map {
     return this.wallGrid[y * this.size + x];
   }
 
-  getMiniMapPoint(x, y) {
+  setMiniMapPoint(x, y) {
     x = Math.floor(x);
     y = Math.floor(y);
     if (x < 0 || x > this.size - 1 || y < 0 || y > this.size - 1) return -1;
-    return this.minimap[y * this.size + x];
+    return (this.minimap[y * this.size + x] = this.wallGrid[y * this.size + x]);
   }
 
   randomize() {
@@ -66,7 +66,7 @@ export class Map {
     function inspect(step, shiftX, shiftY, distance, offset) {
       const dx = cos < 0 ? shiftX : 0;
       const dy = sin < 0 ? shiftY : 0;
-      step.height = self.get(step.x - dx, step.y - dy);
+      step.height = self.getPoint(step.x - dx, step.y - dy);
       step.distance = distance + Math.sqrt(step.length2);
       if (shiftX) step.shading = cos < 0 ? 2 : 0;
       else step.shading = sin < 0 ? 2 : 1;
