@@ -75,6 +75,6 @@ export class Controls {
     if (typeof state === 'undefined') return;
     this.states[state] = val;
     if (event.preventDefault) event.preventDefault();
-    if (event.stopPropagation) event.stopPropagation();
+    // if (event.stopPropagation) event.stopPropagation();
   }
 }

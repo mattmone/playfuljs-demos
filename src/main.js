@@ -11,11 +11,18 @@ const gameCanvas = document.getElementById('gameCanvas');
 gameCanvas.width = window.innerWidth;
 gameCanvas.height = window.innerHeight;
 
-const map = new Map(32);
+let map = new Map(32);
 const player = new Player(map.startingPosition);
 const controls = new Controls(gameCanvas);
 const camera = new Camera(gameCanvas, MOBILE ? 160 : 320, 0.8);
 const loop = new GameLoop();
+
+player.addEventListener('player-use', () => {
+  if (map.near('exit', player)) {
+    map = new Map(32);
+    player.setNewMap(map.startingPosition);
+  }
+});
 
 loop.start(seconds => {
   map.update(seconds);
