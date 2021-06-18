@@ -2,7 +2,7 @@ import { Bitmap } from './Bitmap.js';
 import { CIRCLE } from './constants.js';
 
 export class Player {
-  constructor(x, y, direction) {
+  constructor({ x, y, direction }) {
     this.x = x;
     this.y = y;
     this.direction = direction;

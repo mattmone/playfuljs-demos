@@ -11,13 +11,11 @@ const gameCanvas = document.getElementById('gameCanvas');
 gameCanvas.width = window.innerWidth;
 gameCanvas.height = window.innerHeight;
 
-const player = new Player(16.5, -1.2, Math.PI * 0.5);
 const map = new Map(32);
+const player = new Player(map.startingPosition);
 const controls = new Controls(gameCanvas);
 const camera = new Camera(gameCanvas, MOBILE ? 160 : 320, 0.8);
 const loop = new GameLoop();
-
-map.randomize();
 
 loop.start(seconds => {
   map.update(seconds);
