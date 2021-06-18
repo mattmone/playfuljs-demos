@@ -2,7 +2,7 @@ import { Bitmap } from './Bitmap.js';
 import { TEXTURE } from './constants.js';
 import { oneOf, removeFromArray, rollDice } from './utils.js';
 
-const DEV_MODE = true;
+const DEV_MODE = false;
 export class Map {
   /**
    * A Map
