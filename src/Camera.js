@@ -1,4 +1,4 @@
-import { CIRCLE, MOBILE } from './constants.js';
+import { TEXTURE, CIRCLE, MOBILE } from './constants.js';
 
 export class Camera {
   constructor(canvas, resolution, focalLength) {
@@ -71,20 +71,28 @@ export class Camera {
     const step = ray.find(r => r.height > 0) ?? ray[0];
 
     const textureX = Math.floor(texture.width * step.offset);
-    const wall = this.project(step.height, angle, step.distance);
+    const wall = this.project(step.height / step.height, angle, step.distance);
 
     ctx.globalAlpha = 1;
-    ctx.drawImage(
-      texture.image,
-      textureX,
-      0,
-      1,
-      texture.height,
-      left,
-      wall.top,
-      width,
-      wall.height,
-    );
+    const mapPoint = map.getPoint(step.x, step.y);
+    if (Object.values(TEXTURE.STAIRS.IN).includes(mapPoint)) {
+      ctx.fillStyle = '#FFFF00';
+      ctx.fillRect(left, wall.top, width, wall.height);
+    } else if (Object.values(TEXTURE.STAIRS.OUT).includes(mapPoint)) {
+      ctx.fillStyle = '#00FF00';
+      ctx.fillRect(left, wall.top, width, wall.height);
+    } else
+      ctx.drawImage(
+        texture.image,
+        textureX,
+        0,
+        1,
+        texture.height,
+        left,
+        wall.top,
+        width,
+        wall.height,
+      );
     map.setMiniMapPoint(step.x, step.y);
 
     ctx.fillStyle = '#000000';
@@ -100,9 +108,13 @@ export class Camera {
     this.ctx.transform(1, 0, 0, -1, 0, this.height);
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
     this.ctx.fillRect(this.width - width, 0, width, height);
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
     minimap.forEach((cell, index) => {
-      if (cell === 1)
+      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      if (Object.values(TEXTURE.STAIRS.IN).includes(cell))
+        this.ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
+      if (Object.values(TEXTURE.STAIRS.OUT).includes(cell))
+        this.ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+      if (cell >= 1)
         this.ctx.fillRect(
           this.width - mapSizeModifier - (index % size) * mapSizeModifier,
           Math.floor(index / size) * mapSizeModifier,
