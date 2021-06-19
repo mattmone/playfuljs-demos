@@ -23,6 +23,10 @@ player.addEventListener('player-use', () => {
     player.setNewMap(map.startingPosition);
   }
 });
+player.addEventListener('player-position-change', () => {
+  const nearby = map.nearBy(player);
+  player.notify(nearby);
+});
 
 loop.start(seconds => {
   map.update(seconds);

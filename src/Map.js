@@ -2,7 +2,7 @@ import { Bitmap } from './Bitmap.js';
 import { TEXTURE } from './constants.js';
 import { oneOf, removeFromArray, rollDice } from './utils.js';
 
-const DEV_MODE = false;
+const DEV_MODE = location.href.includes('localhost');
 export class Map {
   /**
    * A Map
@@ -166,6 +166,14 @@ export class Map {
         return true;
       else return false;
     }
+  }
+
+  nearBy(player) {
+    if (
+      Math.floor(player.x) === Math.floor(this.endingPosition.x) &&
+      Math.floor(player.y) === Math.floor(this.endingPosition.y)
+    )
+      return 'exit';
   }
 
   /**

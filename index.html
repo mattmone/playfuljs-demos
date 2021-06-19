@@ -14,9 +14,21 @@
       height:100%;
       width:100%;
     }
+    #notifier {
+      position:fixed;
+      bottom:1rem;
+      left: 50%;
+      transform:translateX(-50%);
+      background-color:rgba(255,255,255,0.3);
+      color:black;
+      text-shadow:0 2px black;
+      padding:8px;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
   <canvas id='gameCanvas'></canvas>
+  <div id='notifier'></div>
 </body>
 </html>

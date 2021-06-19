@@ -1,6 +1,5 @@
 import { Bitmap } from './Bitmap.js';
 import { CIRCLE } from './constants.js';
-import { Map } from './Map.js';
 export class Player extends EventTarget {
   constructor({ x, y, direction }) {
     super();
@@ -10,6 +9,7 @@ export class Player extends EventTarget {
     this.weapon = new Bitmap('assets/knife_hand.png', 319, 320);
     this.paces = 0;
     this.usePress = this.usePress.bind(this);
+    this.notifier = document.querySelector('#notifier');
     document.addEventListener('keydown', this.usePress);
   }
 
@@ -21,8 +21,44 @@ export class Player extends EventTarget {
     this._use = use;
   }
 
+  get x() {
+    return this._x;
+  }
+
+  set x(value) {
+    this._x = value;
+    if (Math.floor(value) !== this._priorX) {
+      this.dispatchEvent(
+        new CustomEvent('player-position-change', { detail: Math.floor(this._x) }),
+      );
+      this._priorX = Math.floor(value);
+    }
+  }
+
+  get y() {
+    return this._y;
+  }
+
+  set y(value) {
+    this._y = value;
+    if (Math.floor(value) !== this._priorY) {
+      this.dispatchEvent(
+        new CustomEvent('player-position-change', { detail: Math.floor(this._y) }),
+      );
+      this._priorY = Math.floor(value);
+    }
+  }
+
   get perpendicular() {
     return this.direction + Math.PI / 2;
+  }
+
+  notify(nearBy) {
+    if (nearBy === 'exit') {
+      this.notifier.innerText = "Press 'e' to go down.";
+      return;
+    }
+    this.notifier.innerText = '';
   }
 
   setNewMap({ x, y, direction }) {
