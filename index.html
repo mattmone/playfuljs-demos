@@ -18,12 +18,17 @@
       position:fixed;
       bottom:1rem;
       left: 50%;
-      transform:translateX(-50%);
+      transform:translateX(-50%) scale(0);
+      transition: 0.4s transform cubic-bezier(0.075, 0.82, 0.165, 1);
+      transform-origin: bottom center;
       background-color:rgba(255,255,255,0.3);
       color:black;
       font-weight:bold;
       padding:8px;
       border-radius: 8px;
+    }
+    #notifier[open] {
+      transform:translate(-50%) scale(1);
     }
   </style>
 </head>

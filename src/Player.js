@@ -54,11 +54,12 @@ export class Player extends EventTarget {
   }
 
   notify(nearBy) {
+    this.notifier.toggleAttribute('open', true);
     if (nearBy === 'exit') {
       this.notifier.innerText = "Press 'e' to go down.";
       return;
     }
-    this.notifier.innerText = '';
+    this.notifier.removeAttribute('open');
   }
 
   setNewMap({ x, y, direction }) {
