@@ -1,5 +1,5 @@
 import { Bitmap } from './Bitmap.js';
-import { TEXTURE } from './constants.js';
+import { SPRITES, TEXTURE } from './constants.js';
 import { oneOf, removeFromArray, rollDice } from './utils.js';
 
 const DEV_MODE = location.href.includes('localhost');
@@ -13,26 +13,48 @@ export class Map {
     this.wallGrid = new Uint8Array(size * size);
     this.wallGrid.fill(255);
     this.minimap = new Uint8Array(size * size);
+    this.sprites = [];
     this.skybox = new Bitmap('assets/deathvalley_panorama.jpg', 2000, 750);
     this.wallTexture = new Bitmap('assets/wall_texture.jpg', 1024, 1024);
     this.light = 0;
     this.build();
+    this.indexToCoordinates = this.indexToCoordinates.bind(this);
   }
 
   /**
    * the direction appropriate room to access the beginning stairs
    */
   get startingPosition() {
-    if (!this.stairsIn) throw new Error('Map not built yet.');
-    return this._directionedPosition(this.stairsIn, TEXTURE.STAIRS.IN);
+    if (!this.portalIn) throw new Error('Map not built yet.');
+    return {
+      x: this.portalIn.x + 0.5,
+      y: this.portalIn.y + 0.5,
+      direction: Math.PI * Math.random() * 2,
+    };
   }
 
   /**
    * the direction appropriate room to access the exit stairs
    */
   get endingPosition() {
-    if (!this.stairsOut) throw new Error('Map not built yet.');
-    return this._directionedPosition(this.stairsOut, TEXTURE.STAIRS.OUT);
+    if (!this.portalOut) throw new Error('Map not built yet.');
+    return {
+      x: this.portalOut.x,
+      y: this.portalOut.y,
+    };
+  }
+
+  getSprite(x, y) {
+    return this.sprites.find(
+      sprite => Math.floor(sprite.x) === Math.floor(x) && Math.floor(sprite.y) === Math.floor(y),
+    );
+  }
+
+  indexToCoordinates(index) {
+    return {
+      x: Math.floor(index % this.size),
+      y: Math.floor(index / this.size),
+    };
   }
 
   /**
@@ -188,29 +210,29 @@ export class Map {
     }
     let x = rollDice(this.size - 2, 1);
     let y = rollDice(this.size - 2, 1);
-    this.stairsIn = {
+    this.portalIn = {
       x,
       y,
     };
-    this.stairsIn.direction = this._determineDoorDirection(this.stairsIn, TEXTURE.STAIRS.IN);
-    this.setPoint(this.stairsIn.x, this.stairsIn.y, this.stairsIn.direction);
-    this.setMiniMapPoint(this.stairsIn.x, this.stairsIn.y);
+    this.setMiniMapPoint(this.portalIn.x, this.portalIn.y);
 
-    const endDirection = this._determineDoorDirection(this.stairsIn, TEXTURE.STAIRS.OUT);
     const endx = rollDice(this.size - 2, 1);
     const endy = rollDice(this.size - 2, 1);
 
-    this.stairsOut = { x: endx, y: endy, direction: endDirection };
-    this.setPoint(this.stairsOut.x, this.stairsOut.y, this.stairsOut.direction);
+    this.portalOut = { x: endx, y: endy };
 
-    const start = {
-      x: Math.floor(this.startingPosition.x),
-      y: Math.floor(this.startingPosition.y),
-    };
-    const end = { x: Math.floor(this.endingPosition.x), y: Math.floor(this.endingPosition.y) };
-
-    this.setPoint(start.x, start.y, 0);
-    this.setPoint(end.x, end.y, 0);
+    this.setPoint(this.portalIn.x, this.portalIn.y, 0);
+    this.sprites.push({
+      x: this.portalIn.x + 0.5,
+      y: this.portalIn.y + 0.5,
+      texture: new Bitmap('assets/portal-in.webp', 1024, 1024),
+    });
+    this.setPoint(this.portalOut.x, this.portalOut.y, 0);
+    this.sprites.push({
+      x: this.portalOut.x + 0.5,
+      y: this.portalOut.y + 0.5,
+      texture: new Bitmap('assets/portal-out.webp', 1024, 1024),
+    });
 
     const rooms = new Array(rollDice(3, 3)).fill(0).map((room, index, rooms) => {
       return {
@@ -220,7 +242,7 @@ export class Map {
       };
     });
 
-    let current = { ...start };
+    let current = { ...this.portalIn };
     rooms
       .sort((a, b) => rollDice(3, 1) - 2)
       .forEach(room => {
@@ -238,7 +260,7 @@ export class Map {
             if (this._checkPath({ x: xCoordinate, y: yCoordinate }))
               this.setPoint(xCoordinate, yCoordinate, 0);
       });
-    this._empathen(current, end);
+    this._empathen(current, this.portalOut);
 
     if (DEV_MODE) this.minimap = this.wallGrid;
   }
@@ -340,8 +362,14 @@ export class Map {
     function inspect(step, shiftX, shiftY, distance, offset) {
       const dx = cos < 0 ? shiftX : 0;
       const dy = sin < 0 ? shiftY : 0;
-      step.height = self.getPoint(step.x - dx, step.y - dy);
-      step.texture = self.getPoint(step.x - dx, step.y - dy);
+      const x = step.x - dx;
+      const y = step.y - dy;
+      const pointValue = self.getPoint(x, y);
+      step.height = [1, 255].includes(pointValue) ? 1 : 0;
+      step.texture = pointValue;
+      step.sprite = self.sprites.find(
+        sprite => Math.floor(sprite.x) === Math.floor(x) && Math.floor(sprite.y) === Math.floor(y),
+      );
       step.distance = distance + Math.sqrt(step.length2);
       if (shiftX) step.shading = cos < 0 ? 2 : 0;
       else step.shading = sin < 0 ? 2 : 1;

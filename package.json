@@ -4,6 +4,7 @@
   "description": "To extend a PlayfulJS demo, just fork this repository.\r If you make something cool,\r [email](mailto:hunter@hunterloftis.com) or [tweet](http://twitter.com/hunterloftis)\r me a link so I can announce it from playfuljs.com!",
   "main": "index.js",
   "scripts": {
+    "start": "web-dev-server --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

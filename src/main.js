@@ -14,7 +14,7 @@ gameCanvas.height = window.innerHeight;
 let map = new Map(32);
 const player = new Player(map.startingPosition);
 const controls = new Controls(gameCanvas);
-const camera = new Camera(gameCanvas, MOBILE ? 160 : 320, 0.8);
+const camera = new Camera(gameCanvas, MOBILE ? 160 : 640, 0.8);
 const loop = new GameLoop();
 
 player.addEventListener('player-use', () => {

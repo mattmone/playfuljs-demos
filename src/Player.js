@@ -5,8 +5,12 @@ export class Player extends EventTarget {
     super();
     this.x = x;
     this.y = y;
-    this.direction = direction;
-    this.weapon = new Bitmap('assets/knife_hand.png', 319, 320);
+    this.directionX = -1;
+    this.directionY = 0;
+    this.planeX = 0;
+    this.planeY = 0.66;
+    this.direction = Math.PI / 2;
+    this.weapon = new Bitmap('assets/knife_hand.webp', 319, 320);
     this.paces = 0;
     this.usePress = this.usePress.bind(this);
     this.notifier = document.querySelector('#notifier');
@@ -68,21 +72,40 @@ export class Player extends EventTarget {
     this.direction = direction;
   }
 
-  rotate(angle) {
-    this.direction = (this.direction + (angle * Math.PI) / 180 + CIRCLE) % CIRCLE;
+  rotate(rotationSpeed, direction) {
+    const oldDirectionX = this.directionX;
+    const oldPlaneX = this.planeX;
+
+    // const radians = (angle * Math.PI) / 180;
+
+    this.directionX =
+      this.directionX * Math.cos(direction * rotationSpeed) -
+      this.directionY * Math.sin(direction * rotationSpeed);
+    this.directionY =
+      oldDirectionX * Math.sin(direction * rotationSpeed) +
+      this.directionY * Math.cos(direction * rotationSpeed);
+
+    this.planeX =
+      this.planeX * Math.cos(direction * rotationSpeed) -
+      this.planeY * Math.sin(direction * rotationSpeed);
+    this.planeY =
+      oldPlaneX * Math.sin(direction * rotationSpeed) +
+      this.planeY * Math.cos(direction * rotationSpeed);
+
+    // this.direction = (this.direction + radians) % CIRCLE;
   }
 
   walk(distance, map) {
-    const dx = Math.cos(this.direction) * distance;
-    const dy = Math.sin(this.direction) * distance;
+    const dx = this.directionX * distance;
+    const dy = this.directionY * distance;
     if (map.getPoint(this.x + dx, this.y) <= 0) this.x += dx;
     if (map.getPoint(this.x, this.y + dy) <= 0) this.y += dy;
     this.paces += distance;
   }
 
   strafe(distance, map) {
-    const dx = Math.cos(this.perpendicular) * distance;
-    const dy = Math.sin(this.perpendicular) * distance;
+    const dx = this.directionY * distance;
+    const dy = -this.directionX * distance;
     if (map.getPoint(this.x + dx, this.y) <= 0) this.x += dx;
     if (map.getPoint(this.x, this.y + dy) <= 0) this.y += dy;
     this.paces += distance;
@@ -93,7 +116,8 @@ export class Player extends EventTarget {
     if (controls.right) this.strafe(3 * seconds, map);
     if (controls.forward) this.walk(3 * seconds, map);
     if (controls.backward) this.walk(-3 * seconds, map);
-    if (controls.rotate) this.rotate(controls.rotate);
+    if (controls.rotate)
+      this.rotate(Math.abs(controls.rotate) * seconds, controls.rotate > 0 ? -1 : 1);
   }
 
   usePress(event) {
