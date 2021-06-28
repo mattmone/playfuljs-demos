@@ -13,6 +13,7 @@ export class Map {
     this.wallGrid = new Uint8Array(size * size);
     this.wallGrid.fill(255);
     this.minimap = new Uint8Array(size * size);
+    this.minimap.fill(254);
     this.sprites = [];
     this.skybox = new Bitmap('assets/deathvalley_panorama.jpg', 2000, 750);
     this.wallTexture = new Bitmap('assets/wall_texture.jpg', 1024, 1024);

@@ -19,7 +19,31 @@ export class Camera {
     this.drawColumns(player, map);
     this.drawSprites(player, map);
     this.drawWeapon(player.weapon, player.paces);
+    this.renderEffects(player);
     this.drawMinimap(player, map);
+  }
+
+  renderEffects(player) {
+    if (!player.effects.length) return delete this.particles;
+    if (!this.particles)
+      this.particles = new Array(Math.ceil(Math.random() * 40) + 100).fill(0).map(() => ({
+        x: Math.floor(Math.random() * this.width),
+        y: Math.floor(Math.random() * this.height * 1.2),
+        width: Math.ceil(Math.random() * 3),
+        height: Math.ceil(Math.random() * 3 + 2),
+        speed: Math.ceil(Math.random() * 3),
+        opacity: Math.random(),
+      }));
+    for (let particle of this.particles) {
+      this.ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+      this.ctx.fillRect(
+        particle.x,
+        particle.y,
+        particle.width * this.spacing,
+        particle.height * this.spacing,
+      );
+      particle.y -= particle.speed;
+    }
   }
 
   drawSky(direction, sky, ambient) {
@@ -234,61 +258,6 @@ export class Camera {
     }
   }
 
-  drawSprite(column, player, map, sprite) {
-    const spritePosition = {
-      x: sprite.x - player.x,
-      y: sprite.y - player.y,
-    };
-
-    const inverseCameraMatrix =
-      1.0 / (player.planeX * player.directionY - player.directionX * player.planeY); //required for correct matrix multiplication
-
-    const transform = {
-      x:
-        inverseCameraMatrix *
-        (player.directionY * spritePosition.x - player.directionX * spritePosition.y),
-      y:
-        inverseCameraMatrix *
-        (-player.planeY * spritePosition.x + player.planeX * spritePosition.y),
-    }; //this is actually the depth inside the screen, that what Z is in 3D, the distance of sprite to player, matching sqrt(spriteDistance[i])
-
-    const spriteScreenX = Math.floor((this.width / 2) * (1 + transform.x / transform.y));
-
-    const uDiv = 1;
-    const vDiv = 1;
-    const vMove = 0;
-
-    const vMoveScreen = Math.floor(vMove / transform.y);
-    const spriteHeight = Math.abs(Math.floor(this.height / transform.y)) / vDiv;
-    const drawStartY = -spriteHeight / 2 + this.height / 2 + vMoveScreen;
-    const drawEndY = spriteHeight / 2 + this.height / 2 + vMoveScreen;
-
-    const spriteWidth = Math.abs(Math.floor(this.height / transform.y)) / uDiv;
-    const drawStartX = -spriteWidth / 2 + spriteScreenX;
-    const drawEndX = spriteWidth / 2 + spriteScreenX;
-
-    const spriteTexture = map.portalInSprite;
-    const textureX = Math.floor(((column - drawStartX) * spriteTexture.width) / spriteWidth);
-
-    const left = Math.floor(column * this.spacing);
-    const width = Math.ceil(this.spacing);
-
-    this.ctx.fillStyle = 'rgba(255,0,0,0.3)';
-    this.ctx.fillRect(left, drawStartY, width, spriteHeight);
-
-    this.ctx.drawImage(
-      spriteTexture.image,
-      textureX,
-      0,
-      1,
-      spriteTexture.height,
-      left,
-      drawStartY,
-      width,
-      drawEndY - drawStartY,
-    );
-  }
-
   drawMinimap(player, { size, minimap, getPoint, portalIn, portalOut, indexToCoordinates }) {
     this.ctx.save();
     const mapSizeModifier = 5;
@@ -302,7 +271,7 @@ export class Camera {
       if ([TEXTURE.WALL, 255].includes(cell)) this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       if (cellCoordinates.x === portalIn.x && cellCoordinates.y === portalIn.y)
         this.ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
-      if (cellCoordinates.x === portalOut.x && cellCoordinates.y === portalOut.y)
+      if (cellCoordinates.x === portalOut.x && cellCoordinates.y === portalOut.y && cell !== 254)
         this.ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
       this.ctx.fillRect(
         this.width - mapSizeModifier - (index % size) * mapSizeModifier,
@@ -319,26 +288,6 @@ export class Camera {
       mapSizeModifier,
     );
     this.ctx.restore();
-  }
-
-  project(height, angle, distance) {
-    const z = distance * Math.cos(angle);
-    const wallHeight = (this.height * height) / z;
-    const bottom = (this.height / 2) * (1 + 1 / z);
-    return {
-      top: bottom - wallHeight,
-      height: wallHeight,
-    };
-  }
-
-  projectSprite(height, distance) {
-    const z = distance;
-    const spriteHeight = (this.height * height) / z;
-    const bottom = (this.height / 2) * (1 + 1 / z);
-    return {
-      top: bottom - spriteHeight,
-      height: spriteHeight,
-    };
   }
 
   sprite(height, angle, distance) {

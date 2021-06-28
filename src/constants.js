@@ -8,3 +8,6 @@ export const SPRITES = {
   PORTAL_INACTIVE: 0,
   PORTAL_ACTIVE: 1,
 };
+export const EFFECTS = {
+  TELEPORT: 1,
+};

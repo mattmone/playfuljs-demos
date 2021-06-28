@@ -1,10 +1,9 @@
-import { Terrain } from './Terrain.js';
 import { Player } from './Player.js';
 import { Map } from './Map.js';
 import { Controls } from './Controls.js';
 import { Camera } from './Camera.js';
 import { GameLoop } from './GameLoop.js';
-import { MOBILE } from './constants.js';
+import { MOBILE, EFFECTS } from './constants.js';
 
 const gameCanvas = document.getElementById('gameCanvas');
 
@@ -21,6 +20,7 @@ player.addEventListener('player-use', () => {
   if (map.near('exit', player)) {
     map = new Map(32);
     player.setNewMap(map.startingPosition);
+    player.addEffect({ effect: EFFECTS.TELEPORT, duration: 2000 });
   }
 });
 player.addEventListener('player-position-change', () => {

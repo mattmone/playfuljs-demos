@@ -1,5 +1,4 @@
 import { Bitmap } from './Bitmap.js';
-import { CIRCLE } from './constants.js';
 export class Player extends EventTarget {
   constructor({ x, y, direction }) {
     super();
@@ -14,6 +13,7 @@ export class Player extends EventTarget {
     this.paces = 0;
     this.usePress = this.usePress.bind(this);
     this.notifier = document.querySelector('#notifier');
+    this.effects = [];
     document.addEventListener('keydown', this.usePress);
   }
 
@@ -124,5 +124,13 @@ export class Player extends EventTarget {
     if (event.key === this.USE) {
       this.dispatchEvent(new CustomEvent('player-use'));
     }
+  }
+
+  addEffect({ effect, duration = 1000 }) {
+    if (!effect || !duration) return;
+    this.effects.push(effect);
+    setTimeout(() => {
+      this.effects.splice(this.effects.indexOf(effect), 1);
+    }, duration);
   }
 }
