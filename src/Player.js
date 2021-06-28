@@ -1,4 +1,5 @@
 import { Bitmap } from './Bitmap.js';
+import { EFFECTS } from './constants.js';
 export class Player extends EventTarget {
   constructor({ x, y, direction }) {
     super();
@@ -14,6 +15,7 @@ export class Player extends EventTarget {
     this.usePress = this.usePress.bind(this);
     this.notifier = document.querySelector('#notifier');
     this.effects = [];
+    this.addEffect({ effect: EFFECTS.TELEPORT, duration: 1500 });
     document.addEventListener('keydown', this.usePress);
   }
 
