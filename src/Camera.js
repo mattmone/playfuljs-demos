@@ -3,8 +3,9 @@ import { TEXTURE, CIRCLE, MOBILE, SPRITES } from './constants.js';
 export class Camera {
   constructor(canvas, resolution, focalLength) {
     this.ctx = canvas.getContext('2d');
-    this.width = canvas.width = window.innerWidth;
-    this.height = canvas.height = window.innerHeight;
+    const gameBox = document.querySelector('#game').getBoundingClientRect();
+    this.width = canvas.width = gameBox.width;
+    this.height = canvas.height = gameBox.height;
     this.resolution = resolution;
     this.spacing = this.width / resolution;
     this.focalLength = focalLength || 0.8;
