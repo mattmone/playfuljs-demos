@@ -61,11 +61,17 @@ export class Player extends EventTarget {
 
   notify(nearBy) {
     this.notifier.toggleAttribute('open', true);
+    const notifyClick = () => this.usePress({ key: this.USE });
     if (nearBy === 'exit') {
       this.notifier.innerText = "Press 'e' to go down.";
+      this.notifier.addEventListener('click', notifyClick, {
+        once: true,
+        passive: true,
+      });
       return;
     }
     this.notifier.removeAttribute('open');
+    this.notifier.removeEventListener('click', notifyClick);
   }
 
   setNewMap({ x, y, direction }) {
