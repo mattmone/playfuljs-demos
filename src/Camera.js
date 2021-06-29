@@ -9,7 +9,7 @@ export class Camera {
     this.resolution = resolution;
     this.spacing = this.width / resolution;
     this.focalLength = focalLength || 0.8;
-    this.range = MOBILE ? 8 : 14;
+    this.range = 8;
     this.lightRange = 5;
     this.scale = (this.width + this.height) / 1200;
     this.zBuffer = new Array(this.width).fill(0);
@@ -120,8 +120,9 @@ export class Camera {
       step.y = 1;
       sideDistance.y = (mapPosition.y + 1 - player.y) * deltaDistance.y;
     }
-    // let sprites = [];
-    while (hit === 0) {
+    let range = 0;
+    while (hit === 0 && range <= this.range) {
+      range++;
       if (sideDistance.x < sideDistance.y) {
         sideDistance.x += deltaDistance.x;
         mapPosition.x += step.x;
@@ -132,8 +133,7 @@ export class Camera {
         side = 1;
       }
       if (map.getPoint(mapPosition.x, mapPosition.y) > 0) hit = 1;
-      // const sprite = map.getSprite(mapPosition.x, mapPosition.y);
-      // if (sprite) sprites.push([column, player, map, sprite]);
+      map.setMiniMapPoint(mapPosition.x, mapPosition.y);
     }
     if (side === 0)
       perpendicularWallDistance = (mapPosition.x - player.x + (1 - step.x) / 2) / rayDirection.x;
@@ -175,7 +175,6 @@ export class Camera {
       Math.ceil(this.spacing),
       draw.height,
     );
-    map.setMiniMapPoint(mapPosition.x, mapPosition.y);
 
     this.ctx.fillStyle = `rgba(0,0,0,${Math.max(
       perpendicularWallDistance / this.lightRange - map.light,
@@ -227,7 +226,7 @@ export class Camera {
       // if (drawEndX >= this.width) drawEndX = this.width - 1;
 
       //loop through every vertical stripe of the sprite on screen
-      for (let stripe = drawStartX; stripe < drawEndX; stripe++) {
+      for (let stripe = drawStartX || -1; stripe < drawEndX || 0; stripe++) {
         const texX = Math.floor(
           ((stripe - (-spriteWidth / 2 + spriteScreenX)) * spriteTexture.width) / spriteWidth,
         );

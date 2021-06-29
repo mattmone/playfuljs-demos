@@ -19,16 +19,18 @@ document.querySelector('#enter').addEventListener('click', async () => {
 
   gameCanvas.width = game.innerWidth;
   gameCanvas.height = game.innerHeight;
+  let mapSize = 32;
 
-  let map = new Map(32);
+  let map = new Map(mapSize);
   const player = new Player(map.startingPosition);
   const controls = new Controls(gameCanvas);
-  const camera = new Camera(gameCanvas, MOBILE ? 320 : 640, 0.8);
+  const camera = new Camera(gameCanvas, MOBILE ? 160 : 320, 0.8);
   const loop = new GameLoop();
 
   player.addEventListener('player-use', () => {
     if (map.near('exit', player)) {
-      map = new Map(32);
+      mapSize += 4;
+      map = new Map(mapSize);
       player.setNewMap(map.startingPosition);
       player.addEffect({ effect: EFFECTS.TELEPORT, duration: 2000 });
     }

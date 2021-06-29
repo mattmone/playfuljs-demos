@@ -166,6 +166,18 @@ export class Map {
   }
 
   /**
+   * get the value of the wallGrid at the given coordinates
+   * @param {Number} x the x coordinate
+   * @param {Number} y the y coordinate
+   * @returns {Number}
+   */
+  getMiniMapPoint(x, y) {
+    x = Math.floor(x);
+    y = Math.floor(y);
+    return this.minimap[y * this.size + x];
+  }
+
+  /**
    * Set the point on the minimap to its coordiantes in the wallGrid
    * @param {Number} x the x coordinate
    * @param {Number} y the y coordinate
@@ -174,10 +186,6 @@ export class Map {
     x = Math.floor(x);
     y = Math.floor(y);
     this.minimap[y * this.size + x] = this.wallGrid[y * this.size + x];
-    // this.minimap[y * this.size + (x + 1)] = this.wallGrid[y * this.size + (x + 1)];
-    this.minimap[y * this.size + (x - 1)] = this.wallGrid[y * this.size + (x - 1)];
-    this.minimap[(y - 1) * this.size + x] = this.wallGrid[(y - 1) * this.size + x];
-    // this.minimap[(y + 1) * this.size + x] = this.wallGrid[(y + 1) * this.size + x];
   }
 
   near(room, player) {

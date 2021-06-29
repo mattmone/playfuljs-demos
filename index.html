@@ -5,6 +5,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>First Person RandoDungo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <script type='module' src='src/main.js'></script>
   <style>
     html, body {
@@ -15,6 +18,10 @@
       width:100%;
       touch-action: none;
       background-color:black;
+      font-family: 'VT323', monospace;
+    }
+    * {
+      box-sizing: border-box;
     }
     [hidden] {
       display:none !important;
@@ -28,11 +35,15 @@
       place-items:center;
     }
     #enter {
-      background:none;
-      border:1px solid green;
+      background:var(--inner);
+      border:2px solid green;
       border-radius:8px;
       color:green;
-      padding:8px;
+      padding:4px 16px;
+      font-size: 44px;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
     }
     #notifier {
       position:fixed;
@@ -50,11 +61,32 @@
     #notifier[open] {
       transform:translate(-50%) scale(1);
     }
+    h1 {
+      color:white;
+      font-size: 70px;
+      text-decoration: underline;
+      text-decoration-color: green;
+      margin:0;
+    }
+    h1 .accent {
+      text-decoration: underline;
+      text-decoration-color: white;
+    }
+    .accent {
+      color:green;
+    }
+    h2 {
+      color:white;
+      font-size:35px;
+      margin-top:0;
+    }
   </style>
 </head>
 <body>
   <section id='welcome-screen'>
-    <button id='enter'>Enter</button>
+    <h1>Rando<span class='accent'>Dungo</span></h1>
+    <h2>FP<span class='accent'>POV</span></h2>
+    <button id='enter' class='pxl-border'>Enter Dungeon</button>
   </section>
   <section id='game' hidden>
     <canvas id='gameCanvas'></canvas>
