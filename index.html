@@ -19,6 +19,7 @@
       touch-action: none;
       background-color:black;
       font-family: 'VT323', monospace;
+      margin:0;
     }
     * {
       box-sizing: border-box;
@@ -30,6 +31,17 @@
       height: 100%;
       width: 100%;
     }
+    #level-display {
+      position:fixed;
+      top:8px;
+      right:8px;
+      color:white;
+      text-align:right;
+    }
+    #level-indicator {
+      color:green;
+    }
+
     #welcome-screen {
       display:grid;
       place-items:center;
@@ -90,6 +102,7 @@
   </section>
   <section id='game' hidden>
     <canvas id='gameCanvas'></canvas>
+    <div id='level-display'>Level <span id='level-indicator'>1</span></div>
     <onscreen-controls id='mobile_controls' hidden min='-30' max='30'>
       <template shadowroot='open'>
         <style>

@@ -32,6 +32,7 @@ document.querySelector('#enter').addEventListener('click', async () => {
       mapSize += 4;
       map = new Map(mapSize);
       player.setNewMap(map.startingPosition);
+      player.level++;
       player.addEffect({ effect: EFFECTS.TELEPORT, duration: 2000 });
     }
   });

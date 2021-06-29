@@ -243,13 +243,15 @@ export class Map {
       texture: new Bitmap('assets/portal-out.webp', 1024, 1024),
     });
 
-    const rooms = new Array(rollDice(3, 3)).fill(0).map((room, index, rooms) => {
-      return {
-        x: rollDice(this.size) - 1,
-        y: rollDice(this.size) - 1,
-        size: rollDice(2, 2),
-      };
-    });
+    const rooms = new Array(rollDice(3, Math.round(this.size / 10)))
+      .fill(0)
+      .map((room, index, rooms) => {
+        return {
+          x: rollDice(this.size) - 1,
+          y: rollDice(this.size) - 1,
+          size: rollDice(2, 2),
+        };
+      });
 
     let current = { ...this.portalIn };
     rooms

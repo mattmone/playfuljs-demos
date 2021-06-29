@@ -1,6 +1,7 @@
 import { Bitmap } from './Bitmap.js';
 import { EFFECTS, MOBILE } from './constants.js';
 export class Player extends EventTarget {
+  #level = 1;
   constructor({ x, y, direction }) {
     super();
     this.x = x;
@@ -14,9 +15,19 @@ export class Player extends EventTarget {
     this.paces = 0;
     this.usePress = this.usePress.bind(this);
     this.notifier = document.querySelector('#notifier');
+    this.levelIndicator = document.querySelector('#level-indicator');
     this.effects = [];
     this.addEffect({ effect: EFFECTS.TELEPORT, duration: 1500 });
     document.addEventListener('keydown', this.usePress);
+  }
+
+  get level() {
+    return this.#level;
+  }
+
+  set level(value) {
+    this.#level = value;
+    this.levelIndicator.textContent = value;
   }
 
   get USE() {

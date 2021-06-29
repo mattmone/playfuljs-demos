@@ -263,6 +263,7 @@ export class Camera {
     const mapSizeModifier = 5;
     const width = size * mapSizeModifier;
     const height = size * mapSizeModifier;
+    this.ctx.translate(-8, 24);
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
     this.ctx.fillRect(this.width - width, 0, width, height);
     minimap.forEach((cell, index) => {
