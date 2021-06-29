@@ -1,5 +1,5 @@
 import { Bitmap } from './Bitmap.js';
-import { EFFECTS } from './constants.js';
+import { EFFECTS, MOBILE } from './constants.js';
 export class Player extends EventTarget {
   constructor({ x, y, direction }) {
     super();
@@ -63,7 +63,9 @@ export class Player extends EventTarget {
     this.notifier.toggleAttribute('open', true);
     const notifyClick = () => this.usePress({ key: this.USE });
     if (nearBy === 'exit') {
-      this.notifier.innerText = "Press 'e' to go down.";
+      this.notifier.innerText = MOBILE
+        ? 'Click to use the portal.'
+        : "Press 'e' to use the portal.";
       this.notifier.addEventListener('click', notifyClick, {
         once: true,
         passive: true,
