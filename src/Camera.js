@@ -4,8 +4,8 @@ export class Camera {
   constructor(canvas, resolution, focalLength) {
     this.ctx = canvas.getContext('2d');
     const gameBox = document.querySelector('#game').getBoundingClientRect();
-    this.width = canvas.width = gameBox.width;
-    this.height = canvas.height = gameBox.height;
+    this.width = canvas.width = Math.floor(gameBox.width);
+    this.height = canvas.height = Math.floor(gameBox.height);
     this.resolution = resolution;
     this.spacing = this.width / resolution;
     this.focalLength = focalLength || 0.8;
