@@ -28,10 +28,10 @@ export class Camera {
     if (!this.particles)
       this.particles = new Array(Math.ceil(Math.random() * 40) + 100).fill(0).map(() => ({
         x: Math.floor(Math.random() * this.width),
-        y: Math.floor(Math.random() * this.height * 1.2),
+        y: Math.floor(Math.random() * this.height * 1.8),
         width: Math.ceil(Math.random() * 3),
-        height: Math.ceil(Math.random() * 3 + 2),
-        speed: Math.ceil(Math.random() * 3),
+        height: Math.ceil(Math.random() * 3 + 5),
+        speed: Math.ceil(Math.random() * 20),
         opacity: Math.random(),
       }));
     for (let particle of this.particles) {

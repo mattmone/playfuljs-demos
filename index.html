@@ -14,6 +14,9 @@
       height:100%;
       width:100%;
     }
+    [hidden] {
+      display:none !important;
+    }
     #notifier {
       position:fixed;
       bottom:1rem;
@@ -34,6 +37,65 @@
 </head>
 <body>
   <canvas id='gameCanvas'></canvas>
+  <onscreen-controls id='mobile_controls' hidden min='-30' max='30'>
+    <template shadowroot='open'>
+      <style>
+        * {
+          box-sizing: border-box;
+        }
+        [hidden] {
+          display:none !important;
+        }
+        :host {
+          display:grid;
+          grid-template-columns: 25vh 1fr 25vh;
+          grid-template-rows: 40px 25vh;
+          position:fixed;
+          bottom:8px;
+          left:8px;
+          right:8px;
+        }
+        #left-joy, #right-joy, #use {
+          background: none;
+          border: 1px solid white;
+          border-radius: 8px;
+          color:white;
+          height: 100%;
+          width:100%;
+          display:flex;
+          align-items:center;
+          justify-content: center;;
+        }
+        #left-joy, #right-joy {
+          border-radius: 50%;
+          grid-row: 2;
+        }
+        #left-joy::before, #right-joy::before {
+          content: '';
+          display:block;
+          height: 15vh;
+          width: 15vh;
+          border-radius:50%;
+          border: 1px solid white;
+          background-color: rgba(255, 255, 255, 0.4);
+          transform:translate(var(--x), var(--y))
+        }
+        #left-joy {
+          grid-column: 1;
+        }
+        #right-joy {
+          grid-column: 3;
+        }
+        #use {
+          grid-row:1;
+          grid-column: 3;
+        }
+      </style>
+      <button id='left-joy'></button>
+      <button id='right-joy'></button>
+      <button id='use' hidden>USE</button>
+    </template>
+  </onscreen-controls>
   <div id='notifier' aria-live="assertive"></div>
 </body>
 </html>

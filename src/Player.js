@@ -114,10 +114,10 @@ export class Player extends EventTarget {
   }
 
   update(controls, map, seconds) {
-    if (controls.left) this.strafe(-3 * seconds, map);
-    if (controls.right) this.strafe(3 * seconds, map);
-    if (controls.forward) this.walk(3 * seconds, map);
-    if (controls.backward) this.walk(-3 * seconds, map);
+    if (controls.left) this.strafe(controls.left * seconds, map);
+    if (controls.right) this.strafe(controls.right * seconds, map);
+    if (controls.forward) this.walk(-controls.forward * seconds, map);
+    if (controls.backward) this.walk(-controls.backward * seconds, map);
     if (controls.rotate)
       this.rotate(Math.abs(controls.rotate) * seconds, controls.rotate > 0 ? -1 : 1);
   }
