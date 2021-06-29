@@ -39,6 +39,12 @@ export class Controls {
       backward: false,
       rotate: false,
     };
+    this.modifiers = {
+      left: -1,
+      right: 1,
+      forward: -1,
+      backward: 1,
+    };
     if (MOBILE) {
       import('./onscreen-controls.js');
       const onscreenControls = document.querySelector('onscreen-controls');
@@ -92,7 +98,7 @@ export class Controls {
     if (!this.locked) return;
     const state = this.codes[event.keyCode];
     if (typeof state === 'undefined') return;
-    this.states[state] = val;
+    this.states[state] = val * this.modifiers[state];
     if (event.preventDefault) event.preventDefault();
     // if (event.stopPropagation) event.stopPropagation();
   }
