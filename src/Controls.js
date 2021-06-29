@@ -39,34 +39,41 @@ export class Controls {
       backward: false,
       rotate: false,
     };
-    if (MOBILE) {
-      import('./onscreen-controls.js');
-      const onscreenControls = document.querySelector('onscreen-controls');
-      onscreenControls.toggleAttribute('hidden');
-      onscreenControls.addEventListener('joy-change', ({ detail: { joyId, dx, dy } }) => {
-        if (joyId === 'right-joy') {
-          this.onMouseMove({ movementX: dx, skipLockCheck: true });
+    // if (MOBILE) {
+    import('./onscreen-controls.js');
+    const onscreenControls = document.querySelector('onscreen-controls');
+    onscreenControls.toggleAttribute('hidden');
+    onscreenControls.addEventListener(
+      'right-joy-change',
+      ({ detail: { joyId, dx, dy } }) => {
+        this.onMouseMove({ movementX: dx / 2, skipLockCheck: true });
+      },
+      { capture: true, passive: true },
+    );
+    onscreenControls.addEventListener(
+      'left-joy-change',
+      ({ detail: { joyId, dx, dy } }) => {
+        this.states.forward = false;
+        this.states.backward = false;
+        this.states.right = false;
+        this.states.left = false;
+        if (dy < 0) {
+          this.states.forward = dy / 10;
         }
-        if (joyId === 'left-joy') {
-          this.states.forward = false;
-          this.states.backward = false;
-          this.states.right = false;
-          this.states.left = false;
-          if (dy < 0) {
-            this.states.forward = dy / 10;
-          }
-          if (dy > 0) {
-            this.states.backward = dy / 10;
-          }
-          if (dx < 0) {
-            this.states.left = dx / 10;
-          }
-          if (dx > 0) {
-            this.states.right = dx / 10;
-          }
+        if (dy > 0) {
+          this.states.backward = dy / 10;
         }
-      });
-    }
+        if (dx < 0) {
+          this.states.left = dx / 10;
+        }
+        if (dx > 0) {
+          this.states.right = dx / 10;
+        }
+      },
+      { capture: true, passive: true },
+    );
+
+    // }
 
     document.addEventListener('keydown', this.onKey.bind(this, 3), false);
     document.addEventListener('keyup', this.onKey.bind(this, false), false);

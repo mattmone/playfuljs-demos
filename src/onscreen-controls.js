@@ -1,6 +1,9 @@
 import { pointerTracker } from './pointerTracker.js';
 
 const clamp = (value, min, max) => {
+  value = Number(value);
+  min = Number(min);
+  max = Number(max);
   if (value < min) return min;
   if (value > max) return max;
   return value;
@@ -33,7 +36,7 @@ class OnscreenControls extends HTMLElement {
 
     pointerTracker(this.leftJoy, this.#tracker.bind(this));
     pointerTracker(this.rightJoy, this.#tracker.bind(this));
-    this.use.addEventListener('click', this.#use);
+    this.use.addEventListener('click', this.#use, { capture: true, passive: true });
   }
 
   #tracker({ target: joyElement, detail: { state, x, y } }) {
@@ -43,9 +46,7 @@ class OnscreenControls extends HTMLElement {
       joyElement.style.setProperty('--x', 0);
       joyElement.style.setProperty('--y', 0);
       this.dispatchEvent(
-        new CustomEvent('joy-change', {
-          bubbles: true,
-          composed: true,
+        new CustomEvent(`${joyId}-change`, {
           detail: { joyId, dx: 0, dy: 0 },
         }),
       );
@@ -57,7 +58,9 @@ class OnscreenControls extends HTMLElement {
     joyElement.style.setProperty('--x', `${dx}px`);
     joyElement.style.setProperty('--y', `${dy}px`);
     this.dispatchEvent(
-      new CustomEvent('joy-change', { bubbles: true, composed: true, detail: { joyId, dx, dy } }),
+      new CustomEvent(`${joyId}-change`, {
+        detail: { joyId, dx, dy },
+      }),
     );
   }
 
