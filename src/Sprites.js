@@ -15,6 +15,10 @@ class Sprites {
     });
     return sprite;
   }
+
+  reset() {
+    this.collection = [];
+  }
 }
 
 export const sprites = new Sprites();

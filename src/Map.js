@@ -23,6 +23,7 @@ export class Map {
     this.light = 0;
     this.build();
     this.indexToCoordinates = this.indexToCoordinates.bind(this);
+    sprites.reset();
   }
 
   /**
