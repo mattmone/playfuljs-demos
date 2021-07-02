@@ -4,6 +4,8 @@ import { EFFECTS } from './constants.js';
 export class Portal extends Interactable {
   constructor(args) {
     super(args);
+    this.type = 'exit';
+    this.texture = new Bitmap('assets/portal-out.webp', 1024, 1024);
   }
 
   use({ player }) {

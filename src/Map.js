@@ -221,14 +221,12 @@ export class Map {
     this.setPoint(this.portalOut.x, this.portalOut.y, 0);
     sprites.collection.push(
       new Portal({
-        type: 'exit',
         x: this.portalOut.x + 0.5,
         y: this.portalOut.y + 0.5,
-        texture: new Bitmap('assets/portal-out.webp', 1024, 1024),
       }),
     );
 
-    const rooms = new Array(rollDice(3, Math.round(this.size / 10)))
+    this.rooms = new Array(rollDice(3, Math.round(this.size / 10)))
       .fill(0)
       .map((room, index, rooms) => {
         return {
@@ -239,7 +237,7 @@ export class Map {
       });
 
     let current = { ...this.portalIn };
-    rooms
+    this.rooms
       .sort((a, b) => rollDice(3, 1) - 2)
       .forEach(room => {
         if (!this._checkPath(room, 255)) return;
@@ -257,19 +255,16 @@ export class Map {
               this.setPoint(xCoordinate, yCoordinate, 0);
       });
     this._empathen(current, this.portalOut);
-    const treasures = rollDice(rooms.length, 1);
-    for (let treasure = 0; treasure < treasures; treasure++) {
-      const { x, y } = this.indexToCoordinates(
-        oneOf(this.wallGrid.map((wg, i) => i).filter(i => this.wallGrid[i] === 0)),
-      );
+    for (let room of this.rooms) {
+      const treasures = rollDice(3) - 1;
+      const { x, y } = {
+        x: rollDice(room.size) + (room.x - room.size),
+        y: rollDice(room.size) + (room.y - room.size),
+      };
       sprites.collection.push(
         new Treasure({
-          type: 'treasure',
           x: x + 0.5,
           y: y + 0.5,
-          distance: 1.5,
-          texture: new Bitmap('assets/chest_closed.png', 1024, 1024),
-          interactedTexture: new Bitmap('assets/chest_open.png', 1024, 1024),
         }),
       );
     }
