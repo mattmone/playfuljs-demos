@@ -13,6 +13,7 @@ export class Map {
    * @param {Number} size the size of a side for a square map
    */
   constructor(size) {
+    sprites.reset();
     this.size = size;
     this.wallGrid = new Uint8Array(size * size);
     this.wallGrid.fill(255);
@@ -23,7 +24,6 @@ export class Map {
     this.light = 0;
     this.build();
     this.indexToCoordinates = this.indexToCoordinates.bind(this);
-    sprites.reset();
   }
 
   /**
