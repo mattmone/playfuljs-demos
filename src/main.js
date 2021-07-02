@@ -4,6 +4,7 @@ import { Controls } from './Controls.js';
 import { Camera } from './Camera.js';
 import { GameLoop } from './GameLoop.js';
 import { MOBILE, EFFECTS } from './constants.js';
+import { sprites } from './Sprites.js';
 
 const game = document.querySelector('#game');
 const welcome = document.querySelector('#welcome-screen');
@@ -19,31 +20,24 @@ document.querySelector('#enter').addEventListener('click', async () => {
 
   gameCanvas.width = game.innerWidth;
   gameCanvas.height = game.innerHeight;
-  let mapSize = 32;
 
-  let map = new Map(mapSize);
-  const player = new Player(map.startingPosition);
+  const player = new Player(new Map(32));
   const controls = new Controls(gameCanvas);
   const camera = new Camera(gameCanvas, MOBILE ? 160 : 320, 0.8);
   const loop = new GameLoop();
 
   player.addEventListener('player-use', () => {
-    if (map.near('exit', player)) {
-      mapSize += 4;
-      map = new Map(mapSize);
-      player.setNewMap(map.startingPosition);
-      player.level++;
-      player.addEffect({ effect: EFFECTS.TELEPORT, duration: 2000 });
-    }
+    const sprite = sprites.nearBy({ x: Math.floor(player.x), y: Math.floor(player.y) });
+    if (sprite.isInteractable) sprite.use({ player });
   });
-  player.addEventListener('player-position-change', () => {
-    const nearby = map.nearBy(player);
+  player.addEventListener('player-position-change', ({ detail: { x, y } }) => {
+    const nearby = sprites.nearBy({ x, y });
     player.notify(nearby);
   });
 
   loop.start(seconds => {
-    map.update(seconds);
-    player.update(controls.states, map, seconds);
-    camera.render(player, map);
+    player.map.update(seconds);
+    player.update(controls.states, seconds);
+    camera.render(player, player.map);
   });
 });

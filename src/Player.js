@@ -2,8 +2,10 @@ import { Bitmap } from './Bitmap.js';
 import { EFFECTS, MOBILE } from './constants.js';
 export class Player extends EventTarget {
   #level = 1;
-  constructor({ x, y, direction }) {
+  constructor(map) {
     super();
+    this.map = map;
+    const { x, y } = this.map.startingPosition;
     this.x = x;
     this.y = y;
     this.directionX = -1;
@@ -46,7 +48,9 @@ export class Player extends EventTarget {
     this._x = value;
     if (Math.floor(value) !== this._priorX) {
       this.dispatchEvent(
-        new CustomEvent('player-position-change', { detail: Math.floor(this._x) }),
+        new CustomEvent('player-position-change', {
+          detail: { x: Math.floor(this._x), y: Math.floor(this._y) },
+        }),
       );
       this._priorX = Math.floor(value);
     }
@@ -60,7 +64,9 @@ export class Player extends EventTarget {
     this._y = value;
     if (Math.floor(value) !== this._priorY) {
       this.dispatchEvent(
-        new CustomEvent('player-position-change', { detail: Math.floor(this._y) }),
+        new CustomEvent('player-position-change', {
+          detail: { x: Math.floor(this._x), y: Math.floor(this._y) },
+        }),
       );
       this._priorY = Math.floor(value);
     }
@@ -70,13 +76,21 @@ export class Player extends EventTarget {
     return this.direction + Math.PI / 2;
   }
 
-  notify(nearBy) {
+  notify(nearBy = {}) {
     this.notifier.toggleAttribute('open', true);
     const notifyClick = () => this.usePress({ key: this.USE });
-    if (nearBy === 'exit') {
+    if (nearBy.type === 'exit') {
       this.notifier.innerText = MOBILE
         ? 'Click to use the portal.'
         : "Press 'e' to use the portal.";
+      this.notifier.addEventListener('click', notifyClick, {
+        once: true,
+        passive: true,
+      });
+      return;
+    }
+    if (nearBy.type === 'treasure') {
+      this.notifier.innerText = MOBILE ? 'Click to open.' : "Press 'e' to open.";
       this.notifier.addEventListener('click', notifyClick, {
         once: true,
         passive: true,
@@ -87,10 +101,11 @@ export class Player extends EventTarget {
     this.notifier.removeEventListener('click', notifyClick);
   }
 
-  setNewMap({ x, y, direction }) {
+  setNewMap(map) {
+    this.map = map;
+    const { x, y } = map.startingPosition;
     this.x = x;
     this.y = y;
-    this.direction = direction;
   }
 
   rotate(rotationSpeed, direction) {
@@ -116,27 +131,27 @@ export class Player extends EventTarget {
     // this.direction = (this.direction + radians) % CIRCLE;
   }
 
-  walk(distance, map) {
+  walk(distance) {
     const dx = this.directionX * distance;
     const dy = this.directionY * distance;
-    if (map.getPoint(this.x + dx, this.y) <= 0) this.x += dx;
-    if (map.getPoint(this.x, this.y + dy) <= 0) this.y += dy;
+    if (this.map.getPoint(this.x + dx, this.y) <= 0) this.x += dx;
+    if (this.map.getPoint(this.x, this.y + dy) <= 0) this.y += dy;
     this.paces += distance;
   }
 
-  strafe(distance, map) {
+  strafe(distance) {
     const dx = this.directionY * distance;
     const dy = -this.directionX * distance;
-    if (map.getPoint(this.x + dx, this.y) <= 0) this.x += dx;
-    if (map.getPoint(this.x, this.y + dy) <= 0) this.y += dy;
+    if (this.map.getPoint(this.x + dx, this.y) <= 0) this.x += dx;
+    if (this.map.getPoint(this.x, this.y + dy) <= 0) this.y += dy;
     this.paces += distance;
   }
 
-  update(controls, map, seconds) {
-    if (controls.left) this.strafe(controls.left * seconds, map);
-    if (controls.right) this.strafe(controls.right * seconds, map);
-    if (controls.forward) this.walk(-controls.forward * seconds, map);
-    if (controls.backward) this.walk(-controls.backward * seconds, map);
+  update(controls, seconds) {
+    if (controls.left) this.strafe(controls.left * seconds, this.map);
+    if (controls.right) this.strafe(controls.right * seconds, this.map);
+    if (controls.forward) this.walk(-controls.forward * seconds, this.map);
+    if (controls.backward) this.walk(-controls.backward * seconds, this.map);
     if (controls.rotate)
       this.rotate(Math.abs(controls.rotate) * seconds, controls.rotate > 0 ? -1 : 1);
   }

@@ -1,6 +1,10 @@
 import { Bitmap } from './Bitmap.js';
-import { SPRITES, TEXTURE } from './constants.js';
+import { TEXTURE } from './constants.js';
 import { oneOf, removeFromArray, rollDice } from './utils.js';
+import { sprites } from './Sprites.js';
+import { Sprite } from './Sprite.js';
+import { Portal } from './Portal.js';
+import { Treasure } from './Treasure.js';
 
 const DEV_MODE = location.href.includes('localhost');
 export class Map {
@@ -14,7 +18,6 @@ export class Map {
     this.wallGrid.fill(255);
     this.minimap = new Uint8Array(size * size);
     this.minimap.fill(254);
-    this.sprites = [];
     this.skybox = new Bitmap('assets/deathvalley_panorama.jpg', 2000, 750);
     this.wallTexture = new Bitmap('assets/wall_texture.jpg', 1024, 1024);
     this.light = 0;
@@ -43,12 +46,6 @@ export class Map {
       x: this.portalOut.x,
       y: this.portalOut.y,
     };
-  }
-
-  getSprite(x, y) {
-    return this.sprites.find(
-      sprite => Math.floor(sprite.x) === Math.floor(x) && Math.floor(sprite.y) === Math.floor(y),
-    );
   }
 
   indexToCoordinates(index) {
@@ -188,25 +185,6 @@ export class Map {
     this.minimap[y * this.size + x] = this.wallGrid[y * this.size + x];
   }
 
-  near(room, player) {
-    if (room === 'exit') {
-      if (
-        Math.floor(player.x) === Math.floor(this.endingPosition.x) &&
-        Math.floor(player.y) === Math.floor(this.endingPosition.y)
-      )
-        return true;
-      else return false;
-    }
-  }
-
-  nearBy(player) {
-    if (
-      Math.floor(player.x) === Math.floor(this.endingPosition.x) &&
-      Math.floor(player.y) === Math.floor(this.endingPosition.y)
-    )
-      return 'exit';
-  }
-
   /**
    * randomly build the floor plan for the map
    */
@@ -231,17 +209,23 @@ export class Map {
     this.portalOut = { x: endx, y: endy };
 
     this.setPoint(this.portalIn.x, this.portalIn.y, 0);
-    this.sprites.push({
-      x: this.portalIn.x + 0.5,
-      y: this.portalIn.y + 0.5,
-      texture: new Bitmap('assets/portal-in.webp', 1024, 1024),
-    });
+    sprites.collection.push(
+      new Sprite({
+        type: 'entrance',
+        x: this.portalIn.x + 0.5,
+        y: this.portalIn.y + 0.5,
+        texture: new Bitmap('assets/portal-in.webp', 1024, 1024),
+      }),
+    );
     this.setPoint(this.portalOut.x, this.portalOut.y, 0);
-    this.sprites.push({
-      x: this.portalOut.x + 0.5,
-      y: this.portalOut.y + 0.5,
-      texture: new Bitmap('assets/portal-out.webp', 1024, 1024),
-    });
+    sprites.collection.push(
+      new Portal({
+        type: 'exit',
+        x: this.portalOut.x + 0.5,
+        y: this.portalOut.y + 0.5,
+        texture: new Bitmap('assets/portal-out.webp', 1024, 1024),
+      }),
+    );
 
     const rooms = new Array(rollDice(3, Math.round(this.size / 10)))
       .fill(0)
@@ -272,6 +256,22 @@ export class Map {
               this.setPoint(xCoordinate, yCoordinate, 0);
       });
     this._empathen(current, this.portalOut);
+    const treasures = rollDice(rooms.length, 1);
+    for (let treasure = 0; treasure < treasures; treasure++) {
+      const { x, y } = this.indexToCoordinates(
+        oneOf(this.wallGrid.map((wg, i) => i).filter(i => this.wallGrid[i] === 0)),
+      );
+      sprites.collection.push(
+        new Treasure({
+          type: 'treasure',
+          x: x + 0.5,
+          y: y + 0.5,
+          distance: 1.5,
+          texture: new Bitmap('assets/chest_closed.png', 1024, 1024),
+          interactedTexture: new Bitmap('assets/chest_open.png', 1024, 1024),
+        }),
+      );
+    }
 
     if (DEV_MODE) this.minimap = this.wallGrid;
   }

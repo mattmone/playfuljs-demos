@@ -1,4 +1,5 @@
-import { TEXTURE, CIRCLE, MOBILE, SPRITES } from './constants.js';
+import { TEXTURE, CIRCLE } from './constants.js';
+import { sprites } from './Sprites.js';
 
 export class Camera {
   constructor(canvas, resolution, focalLength) {
@@ -186,7 +187,7 @@ export class Camera {
   }
 
   drawSprites(player, map) {
-    for (let sprite of map.sprites) {
+    for (let sprite of sprites.collection) {
       const spriteTexture = sprite.texture;
       //translate sprite position to relative to camera
       const spriteX = sprite.x - player.x;
@@ -205,28 +206,28 @@ export class Camera {
       const spriteScreenX = Math.floor((this.resolution / 2) * (1 + transformX / transformY));
 
       //parameters for scaling and moving the sprites
-      const uDiv = 1;
-      const vDiv = 1;
+      const uDiv = 2;
+      const vDiv = 0.8;
       const vMove = 50;
       const vMoveScreen = Math.floor(vMove / transformY);
 
       //calculate height of the sprite on screen
       const spriteHeight = Math.abs(Math.floor(this.height / transformY)) / vDiv; //using "transformY" instead of the real distance prevents fisheye
       //calculate lowest and highest pixel to fill in current stripe
-      const drawStartY = -spriteHeight / 2 + this.height / 2 + vMoveScreen;
-      // if(drawStartY < 0) drawStartY = 0;
-      const drawEndY = spriteHeight / 2 + this.height / 2 + vMoveScreen;
-      // if(drawEndY >= h) drawEndY = h - 1;
+      let drawStartY = -spriteHeight / 2 + this.height / 2 + vMoveScreen;
+      // if (drawStartY < 0) drawStartY = 0;
+      let drawEndY = spriteHeight / 2 + this.height / 2 + vMoveScreen;
+      // if (drawEndY >= this.height) drawEndY = this.height - 1;
 
       //calculate width of the sprite
       const spriteWidth = Math.abs(Math.floor(this.height / transformY)) / uDiv;
-      const drawStartX = -spriteWidth / 2 + spriteScreenX;
-      // if(drawStartX < 0) drawStartX = 0;
-      const drawEndX = spriteWidth / 2 + spriteScreenX;
-      // if (drawEndX >= this.width) drawEndX = this.width - 1;
+      let drawStartX = -spriteWidth / 2 + spriteScreenX;
+      if (drawStartX < 0) drawStartX = 0;
+      let drawEndX = spriteWidth / 2 + spriteScreenX;
+      if (drawEndX >= this.width) drawEndX = this.width - 1;
 
       //loop through every vertical stripe of the sprite on screen
-      for (let stripe = drawStartX || -1; stripe < drawEndX || 0; stripe++) {
+      for (let stripe = drawStartX; stripe < drawEndX; stripe++) {
         const texX = Math.floor(
           ((stripe - (-spriteWidth / 2 + spriteScreenX)) * spriteTexture.width) / spriteWidth,
         );
@@ -240,6 +241,8 @@ export class Camera {
           const left = stripe * this.spacing;
           const width = this.spacing;
           const drawHeight = drawEndY - drawStartY;
+          // this.ctx.fillStyle = 'rgba(255,0,0,0.4)';
+          // this.ctx.fillRect(left, drawStartY, width, drawHeight);
           this.ctx.globalAlpha = 1 / (transformY - this.lightRange / 4);
           this.ctx.drawImage(
             spriteTexture.image,
@@ -271,9 +274,9 @@ export class Camera {
       this.ctx.fillStyle = 'rgba(0, 0, 0, 0)';
       if ([TEXTURE.WALL, 255].includes(cell)) this.ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       if (cellCoordinates.x === portalIn.x && cellCoordinates.y === portalIn.y)
-        this.ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
+        this.ctx.fillStyle = '#9e929c77';
       if (cellCoordinates.x === portalOut.x && cellCoordinates.y === portalOut.y && cell !== 254)
-        this.ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+        this.ctx.fillStyle = '#66e1fb77';
       this.ctx.fillRect(
         this.width - mapSizeModifier - (index % size) * mapSizeModifier,
         Math.floor(index / size) * mapSizeModifier,
