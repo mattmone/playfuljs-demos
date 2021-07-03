@@ -3,13 +3,12 @@ import { Map } from './Map.js';
 import { Controls } from './Controls.js';
 import { Camera } from './Camera.js';
 import { GameLoop } from './GameLoop.js';
-import { MOBILE, EFFECTS } from './constants.js';
+import { MOBILE } from './constants.js';
 import { sprites } from './Sprites.js';
+import { doubleRaf } from './utils.js';
 
 const game = document.querySelector('#game');
 const welcome = document.querySelector('#welcome-screen');
-const doubleRaf = () =>
-  new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
 
 document.querySelector('#enter').addEventListener('click', async () => {
   welcome.toggleAttribute('hidden', true);

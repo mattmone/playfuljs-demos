@@ -16,3 +16,6 @@ export function rollDice(sides = 2, times = 1) {
   if (!total) return 0;
   return total;
 }
+
+export const doubleRaf = () =>
+  new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
