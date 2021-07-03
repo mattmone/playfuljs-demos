@@ -6,7 +6,13 @@ export class Portal extends Interactable {
   constructor(args) {
     super(args);
     this.type = 'exit';
-    this.texture = new Bitmap('assets/portal-out.webp', 1024, 1024);
+    // this._texture = new Bitmap('assets/portal-out.webp', 1024, 1024);
+    this.frames = [
+      new Bitmap('assets/portal-out-1.webp', 1024, 1024),
+      new Bitmap('assets/portal-out-2.webp', 1024, 1024),
+      new Bitmap('assets/portal-out-3.webp', 1024, 1024),
+      new Bitmap('assets/portal-out-4.webp', 1024, 1024),
+    ];
   }
 
   use({ player }) {

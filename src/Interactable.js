@@ -12,7 +12,7 @@ export class Interactable extends Sprite {
   }
 
   use() {
-    this.texture = this.interactedTexture;
+    this._texture = this.interactedTexture;
     this.used = true;
   }
 }
