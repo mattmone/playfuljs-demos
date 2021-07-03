@@ -183,7 +183,6 @@ export class Camera {
     )})`;
     this.ctx.fillRect(left, draw.start, Math.ceil(this.spacing), draw.height);
     this.zBuffer[column] = perpendicularWallDistance;
-    // if (sprites.length) sprites.forEach(sprite => this.drawSprite(...sprite));
   }
 
   drawSprites(player, map) {
@@ -261,7 +260,7 @@ export class Camera {
     }
   }
 
-  drawMinimap(player, { size, minimap, getPoint, portalIn, portalOut, indexToCoordinates }) {
+  drawMinimap(player, { size, minimap, portalIn, portalOut, indexToCoordinates }) {
     this.ctx.save();
     const mapSizeModifier = 5;
     const width = size * mapSizeModifier;
@@ -292,17 +291,5 @@ export class Camera {
       mapSizeModifier,
     );
     this.ctx.restore();
-  }
-
-  sprite(height, angle, distance) {
-    const invDet = 1.0 / (planeX * dirY - dirX * planeY); //required for correct matrix multiplication
-
-    const transformX = invDet * (dirY * spriteX - dirX * spriteY);
-    const transformY = invDet * (-planeY * spriteX + planeX * spriteY); //this is actually the depth inside the screen, that what Z is in 3D
-    const z = distance * Math.cos(angle);
-    return {
-      top: bottom - wallHeight,
-      height: wallHeight,
-    };
   }
 }
