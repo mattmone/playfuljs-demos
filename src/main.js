@@ -27,6 +27,7 @@ document.querySelector('#enter').addEventListener('click', async () => {
 
   player.addEventListener('player-use', () => {
     const sprite = sprites.nearBy({ x: Math.floor(player.x), y: Math.floor(player.y) });
+    if (!sprite) return;
     if (sprite.isInteractable) sprite.use({ player });
     const nearby = sprites.nearBy({ x: Math.floor(player.x), y: Math.floor(player.y) });
     player.notify(nearby);
