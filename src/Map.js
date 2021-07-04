@@ -1,6 +1,6 @@
 import { Bitmap } from './Bitmap.js';
 import { TEXTURE } from './constants.js';
-import { oneOf, removeFromArray, rollDice } from './utils.js';
+import { oneOf, removeFromArray, rollDice, clamp } from './utils.js';
 import { sprites } from './Sprites.js';
 import { Sprite } from './Sprite.js';
 import { Portal } from './Portal.js';
@@ -230,8 +230,8 @@ export class Map {
       .fill(0)
       .map((room, index, rooms) => {
         return {
-          x: rollDice(this.size) - 1,
-          y: rollDice(this.size) - 1,
+          x: rollDice(this.size - 3) + 1,
+          y: rollDice(this.size - 3) + 1,
           size: rollDice(2, 2),
         };
       });
@@ -245,10 +245,14 @@ export class Map {
 
         this._empathen(current, room);
 
-        for (let xCoordinate = room.x - room.size; xCoordinate < room.x + room.size; xCoordinate++)
+        for (
+          let xCoordinate = room.x - room.size;
+          xCoordinate < clamp(room.x + room.size, 1, this.size - 1);
+          xCoordinate++
+        )
           for (
             let yCoordinate = room.y - room.size;
-            yCoordinate < room.y + room.size;
+            yCoordinate < clamp(room.y + room.size, 1, this.size - 1);
             yCoordinate++
           )
             if (this._checkPath({ x: xCoordinate, y: yCoordinate }))
@@ -257,10 +261,12 @@ export class Map {
     this._empathen(current, this.portalOut);
     for (let room of this.rooms) {
       const treasures = rollDice(3) - 1;
-      const { x, y } = {
-        x: rollDice(room.size) + (room.x - room.size),
-        y: rollDice(room.size) + (room.y - room.size),
-      };
+      let x = 0;
+      let y = 0;
+      while (this.getPoint(x, y) !== 0) {
+        x = rollDice(room.size) + (room.x - room.size);
+        y = rollDice(room.size) + (room.y - room.size);
+      }
       sprites.collection.push(
         new Treasure({
           x: x + 0.5,
@@ -326,63 +332,6 @@ export class Map {
     if (y <= 1) removeFromArray(possibilities, selections.NORTH);
     if (y >= this.size - 1) removeFromArray(possibilities, selections.SOUTH);
     return oneOf(possibilities);
-  }
-
-  /**
-   * cast a ray from a point and see what hits you get out to a certain range
-   * @param {Point} point the starting point
-   * @param {Number} angle the angle to cast the ray in radians
-   * @param {Number} range how far the ray should cast
-   * @returns {Array} an array of hits
-   */
-  cast(point, angle, range) {
-    const self = this;
-    const sin = Math.sin(angle);
-    const cos = Math.cos(angle);
-    const noWall = { length2: Infinity };
-
-    return ray({ x: point.x, y: point.y, height: 0, distance: 0 });
-
-    function ray(origin) {
-      const stepX = step(sin, cos, origin.x, origin.y);
-      const stepY = step(cos, sin, origin.y, origin.x, true);
-      const nextStep =
-        stepX.length2 < stepY.length2
-          ? inspect(stepX, 1, 0, origin.distance, stepX.y)
-          : inspect(stepY, 0, 1, origin.distance, stepY.x);
-
-      if (nextStep.distance > range) return [origin];
-      return [origin].concat(ray(nextStep));
-    }
-
-    function step(rise, run, x, y, inverted) {
-      if (run === 0) return noWall;
-      const dx = run > 0 ? Math.floor(x + 1) - x : Math.ceil(x - 1) - x;
-      const dy = dx * (rise / run);
-      return {
-        x: inverted ? y + dy : x + dx,
-        y: inverted ? x + dx : y + dy,
-        length2: dx * dx + dy * dy,
-      };
-    }
-
-    function inspect(step, shiftX, shiftY, distance, offset) {
-      const dx = cos < 0 ? shiftX : 0;
-      const dy = sin < 0 ? shiftY : 0;
-      const x = step.x - dx;
-      const y = step.y - dy;
-      const pointValue = self.getPoint(x, y);
-      step.height = [1, 255].includes(pointValue) ? 1 : 0;
-      step.texture = pointValue;
-      step.sprite = self.sprites.find(
-        sprite => Math.floor(sprite.x) === Math.floor(x) && Math.floor(sprite.y) === Math.floor(y),
-      );
-      step.distance = distance + Math.sqrt(step.length2);
-      if (shiftX) step.shading = cos < 0 ? 2 : 0;
-      else step.shading = sin < 0 ? 2 : 1;
-      step.offset = offset - Math.floor(offset);
-      return step;
-    }
   }
 
   /**

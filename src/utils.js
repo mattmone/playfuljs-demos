@@ -19,3 +19,12 @@ export function rollDice(sides = 2, times = 1) {
 
 export const doubleRaf = () =>
   new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+
+export const clamp = (value, min, max) => {
+  value = Number(value);
+  min = Number(min);
+  max = Number(max);
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+};

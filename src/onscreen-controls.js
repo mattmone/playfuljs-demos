@@ -1,13 +1,5 @@
 import { pointerTracker } from './pointerTracker.js';
-
-const clamp = (value, min, max) => {
-  value = Number(value);
-  min = Number(min);
-  max = Number(max);
-  if (value < min) return min;
-  if (value > max) return max;
-  return value;
-};
+import { clamp } from './utils.js';
 
 class OnscreenControls extends HTMLElement {
   #joysticks = {};
