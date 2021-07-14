@@ -47,7 +47,7 @@ export class Controls extends EventTarget {
       backward: 1,
     };
     if (MOBILE) {
-      import('./onscreen-controls.js');
+      import('./components/onscreen-controls.js');
       const onscreenControls = document.querySelector('onscreen-controls');
       onscreenControls.toggleAttribute('hidden');
       onscreenControls.addEventListener(
@@ -79,6 +79,9 @@ export class Controls extends EventTarget {
         },
         { capture: true, passive: true },
       );
+      onscreenControls.addEventListener('toggle-inventory', () => {
+        this.dispatchEvent(new CustomEvent('toggle-inventory'));
+      });
     }
 
     document.addEventListener('keydown', this.onKey.bind(this, 3), false);

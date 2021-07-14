@@ -22,8 +22,8 @@ class InventoryScreen extends LitElement {
         display: grid;
         grid-template-columns: 1fr 2fr;
         grid-template-rows: 44px 1fr;
-        height: 80vh;
-        width: 85vw;
+        height: 90vh;
+        width: 95vw;
         border-radius: 8px;
       }
       #selection,
@@ -46,7 +46,7 @@ class InventoryScreen extends LitElement {
       #inventory {
         border-radius: 0 0 8px 0;
         border-left: 1px solid black;
-        grid-template-rows: 44px 1fr;
+        grid-template-rows: min-content 1fr;
       }
       #header {
         display: flex;
@@ -72,10 +72,13 @@ class InventoryScreen extends LitElement {
       }
       #selection-stats {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 2fr 1fr;
         grid-auto-rows: 35px;
-        font-size: 24px;
+        font-size: 20px;
         gap: 0 16px;
+      }
+      #selection-stats div {
+        white-space: nowrap;
       }
       #selection-name,
       #type {
@@ -100,16 +103,16 @@ class InventoryScreen extends LitElement {
         display: flex;
         justify-content: stretch;
         align-items: center;
+        flex-wrap: wrap;
       }
       #filter button {
         display: grid;
         place-items: center;
-        padding: 8px 16px;
         color: green;
         background: black;
         border: 1px solid green;
-        flex-grow: 1;
-        height: 100%;
+        flex: 1;
+        height: 44px;
         cursor: pointer;
       }
       #filter button[selected] {
@@ -142,7 +145,7 @@ class InventoryScreen extends LitElement {
       .item-name,
       .item-delete {
         flex-grow: 1;
-        font-size: 44px;
+        font-size: 22px;
         font-family: 'VT323';
         color: green;
         background: black;
@@ -153,6 +156,7 @@ class InventoryScreen extends LitElement {
         display: grid;
         place-items: center;
         cursor: pointer;
+        height: 44px;
       }
       .item-delete {
         flex-grow: 0;

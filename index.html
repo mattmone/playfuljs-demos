@@ -153,14 +153,27 @@
           #right-joy {
             grid-column: 3;
           }
-          #use {
-            grid-row:1;
-            grid-column: 3;
+          #inventory {
+            position:fixed;
+            top:8px;
+            left:8px;
+            width:44px;
+            height:44px;
+            margin:0;
+            padding:0;
+            display:grid;
+            place-items: center;
+            cursor:pointer;
+            border-radius:8px;
+            background:black;
+            color:green;
+            border-color:1px solid green;
+            font-family: 'VT323';
           }
         </style>
         <button id='left-joy'></button>
         <button id='right-joy'></button>
-        <button id='use' hidden>USE</button>
+        <button id='inventory'>i</button>
       </template>
     </onscreen-controls>
     <inventory-screen hidden></inventory-screen>

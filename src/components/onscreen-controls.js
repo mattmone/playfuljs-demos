@@ -1,5 +1,5 @@
-import { pointerTracker } from './pointerTracker.js';
-import { clamp } from './utils.js';
+import { pointerTracker } from '../pointerTracker.js';
+import { clamp } from '../utils.js';
 
 class OnscreenControls extends HTMLElement {
   #joysticks = {};
@@ -24,11 +24,11 @@ class OnscreenControls extends HTMLElement {
         y: rightBox.top + rightBox.height / 2,
       },
     };
-    this.use = this.shadowRoot.querySelector('#use');
+    this.inventory = this.shadowRoot.querySelector('#inventory');
 
     pointerTracker(this.leftJoy, this.#tracker.bind(this));
     pointerTracker(this.rightJoy, this.#tracker.bind(this));
-    this.use.addEventListener('click', this.#use, { capture: true, passive: true });
+    this.inventory.addEventListener('click', this.#inventory, { capture: true, passive: true });
   }
 
   #tracker({ target: joyElement, detail: { state, x, y } }) {
@@ -56,8 +56,8 @@ class OnscreenControls extends HTMLElement {
     );
   }
 
-  #use() {
-    this.dispatchEvent(new CustomEvent('use', { bubbles: true, composed: true }));
+  #inventory() {
+    this.dispatchEvent(new CustomEvent('toggle-inventory', { bubbles: true, composed: true }));
   }
 }
 customElements.define('onscreen-controls', OnscreenControls);
