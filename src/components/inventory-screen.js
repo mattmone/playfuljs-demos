@@ -25,13 +25,15 @@ class InventoryScreen extends LitElement {
         height: 90vh;
         width: 95vw;
         border-radius: 8px;
+        color: green;
       }
       #selection,
       #inventory {
         display: grid;
         height: 100%;
         width: 100%;
-        background-color: rgba(100, 100, 100, 1);
+        background-color: rgba(10, 10, 10, 0.7);
+        backdrop-filter: blur(8px);
         border-radius: 0 0 0 8px;
         overflow: auto;
       }
@@ -52,7 +54,8 @@ class InventoryScreen extends LitElement {
         display: flex;
         flex-direction: row-reverse;
         grid-column: 1 / 3;
-        background-color: black;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
         border-radius: 8px 8px 0 0;
       }
       #close {
