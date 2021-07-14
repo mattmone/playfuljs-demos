@@ -122,6 +122,7 @@ class InventoryScreen extends LitElement {
         cursor: pointer;
         font-family: 'VT323';
         font-size: 20px;
+        text-transform: uppercase;
       }
       #filter button[selected] {
         color: black;
@@ -165,6 +166,9 @@ class InventoryScreen extends LitElement {
         place-items: center;
         cursor: pointer;
         height: 44px;
+      }
+      .item-name {
+        text-transform: uppercase;
       }
       .item-delete {
         flex-grow: 0;
@@ -301,6 +305,16 @@ class InventoryScreen extends LitElement {
     )}`,
   };
 
+  filterButton(type) {
+    return html`<button
+      ?selected=${this.view === type}
+      ?disabled="${!this.items[type]?.length}"
+      @click="${() => (this.view = type)}"
+    >
+      ${type}
+    </button>`;
+  }
+
   render() {
     return html` <article id="container">
       <section id="header">
@@ -320,55 +334,9 @@ class InventoryScreen extends LitElement {
           <button ?selected=${this.view === 'all'} @click="${() => (this.view = 'all')}">
             All
           </button>
-          <button
-            ?selected=${this.view === 'weapons'}
-            ?disabled="${!this.items['weapons']?.length}"
-            @click="${() => (this.view = 'weapons')}"
-          >
-            Weapons
-          </button>
-          <button
-            ?selected=${this.view === 'helms'}
-            ?disabled="${!this.items['helms']?.length}"
-            @click="${() => (this.view = 'helms')}"
-          >
-            Helms
-          </button>
-          <button
-            ?selected=${this.view === 'body'}
-            ?disabled="${!this.items['body']?.length}"
-            @click="${() => (this.view = 'body')}"
-          >
-            Body
-          </button>
-          <button
-            ?selected=${this.view === 'gloves'}
-            ?disabled="${!this.items['gloves']?.length}"
-            @click="${() => (this.view = 'gloves')}"
-          >
-            Gloves
-          </button>
-          <button
-            ?selected=${this.view === 'boots'}
-            ?disabled="${!this.items['boots']?.length}"
-            @click="${() => (this.view = 'boots')}"
-          >
-            Boots
-          </button>
-          <button
-            ?selected=${this.view === 'rings'}
-            ?disabled="${!this.items['rings']?.length}"
-            @click="${() => (this.view = 'rings')}"
-          >
-            Rings
-          </button>
-          <button
-            ?selected=${this.view === 'gems'}
-            ?disabled="${!this.items['gems']?.length}"
-            @click="${() => (this.view = 'gems')}"
-          >
-            Gems
-          </button>
+          ${['weapons', 'helms', 'body', 'gloves', 'boots', 'rings', 'gems'].map(type =>
+            this.filterButton(type),
+          )}
         </div>
         <ul id="item-list">
           ${this.viewItems.map(
