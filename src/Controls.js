@@ -1,18 +1,18 @@
 import { MOBILE } from './constants.js';
-export class Controls {
+export class Controls extends EventTarget {
   constructor(canvas) {
+    super();
     this.canvas = canvas;
     this.canvas.onclick = async () => {
       document.addEventListener(
         'pointerlockchange',
         () => {
           this.locked = true;
-          console.log('locked');
           document.addEventListener(
             'pointerlockchange',
             () => {
               this.locked = false;
-              console.log('unlocked');
+              this.resetStates();
             },
             { capture: false, once: true },
           );
@@ -23,14 +23,14 @@ export class Controls {
     };
 
     this.codes = {
-      65: 'left',
-      37: 'left',
-      68: 'right',
-      39: 'right',
-      87: 'forward',
-      38: 'forward',
-      83: 'backward',
-      40: 'backward',
+      ArrowLeft: 'left',
+      a: 'left',
+      ArrowRight: 'right',
+      d: 'right',
+      ArrowUp: 'forward',
+      w: 'forward',
+      ArrowDown: 'backward',
+      s: 'backward',
     };
     this.states = {
       left: false,
@@ -38,6 +38,7 @@ export class Controls {
       forward: false,
       backward: false,
       rotate: false,
+      inventory: false,
     };
     this.modifiers = {
       left: -1,
@@ -52,7 +53,7 @@ export class Controls {
       onscreenControls.addEventListener(
         'right-joy-change',
         ({ detail: { joyId, dx, dy } }) => {
-          this.onMouseMove({ movementX: dx / 2, skipLockCheck: true });
+          this.onMouseMove({ movementX: dx / 4, skipLockCheck: true });
         },
         { capture: true, passive: true },
       );
@@ -85,6 +86,10 @@ export class Controls {
     this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this), false);
   }
 
+  resetStates() {
+    for (let state of Object.keys(this.states)) this.states[state] = false;
+  }
+
   onMouseMove({ movementX, skipLockCheck = false }) {
     if (!this.locked && !skipLockCheck) return;
     const negative = movementX < 0 ? -1 : 1;
@@ -95,11 +100,14 @@ export class Controls {
   }
 
   onKey(val, event) {
+    if (event.key === 'i' && event.type === 'keyup') {
+      this.dispatchEvent(new CustomEvent('toggle-inventory'));
+      return;
+    }
     if (!this.locked) return;
-    const state = this.codes[event.keyCode];
+    const state = this.codes[event.key];
     if (typeof state === 'undefined') return;
     this.states[state] = val * this.modifiers[state];
     if (event.preventDefault) event.preventDefault();
-    // if (event.stopPropagation) event.stopPropagation();
   }
 }

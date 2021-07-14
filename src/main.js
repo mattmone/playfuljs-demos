@@ -25,6 +25,19 @@ document.querySelector('#enter').addEventListener('click', async () => {
   const camera = new Camera(gameCanvas, MOBILE ? 160 : 320, 0.8);
   const loop = new GameLoop();
 
+  document.body.player = player;
+
+  const inventoryScreen = document.querySelector('inventory-screen');
+  inventoryScreen.addEventListener('equip-item', ({ detail: item }) => player.equipItem(item));
+
+  controls.addEventListener('toggle-inventory', () => {
+    player.toggleInventory();
+  });
+
+  player.addEventListener('equipment-change', () => {
+    inventoryScreen.requestUpdate();
+  });
+
   player.addEventListener('player-use', () => {
     const sprite = sprites.nearBy({ x: Math.floor(player.x), y: Math.floor(player.y) });
     if (!sprite) return;

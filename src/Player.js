@@ -1,6 +1,8 @@
 import { Bitmap } from './Bitmap.js';
 import { EFFECTS, MOBILE } from './constants.js';
+import { Items } from './Items/Items.js';
 export class Player extends EventTarget {
+  /** @property {Number} #level */
   #level = 1;
   constructor(map) {
     super();
@@ -154,6 +156,80 @@ export class Player extends EventTarget {
     if (controls.backward) this.walk(-controls.backward * seconds, this.map);
     if (controls.rotate)
       this.rotate(Math.abs(controls.rotate) * seconds, controls.rotate > 0 ? -1 : 1);
+  }
+
+  async toggleInventory() {
+    await import('./components/inventory-screen.js');
+    const inventoryScreen = document.querySelector('inventory-screen');
+    if (inventoryScreen.isOpen) return inventoryScreen.close();
+    inventoryScreen.items = this.inventory;
+    inventoryScreen.selection = this.inventory[0] || {};
+    inventoryScreen.open();
+  }
+
+  equipItem(item) {
+    if (item.equipped) return this.#unequip(item);
+    this.#equip[item.category](item);
+  }
+
+  equipment = new Items();
+  inventory = new Items();
+
+  #equip = {
+    weapon: item => {
+      if (
+        ['two-handed', 'ranged'].includes(item.type) ||
+        ['two-handed', 'ranged'].includes(this.equipment.weapons[0]?.type)
+      )
+        this.equipment.weapons.forEach(weapon => this.#unequip(weapon));
+      if (item.type === 'one-handed' && this.equipment.weapons.length > 1)
+        this.#unequip(this.equipment.weapons[this.equipment.weapons.length - 1]);
+      this.#equip.item(item);
+    },
+    armor: item => {
+      this.#equip[item.type](item);
+    },
+    helm: item => {
+      this.#unequip(this.equipment.helms[0]);
+      this.#equip.item(item);
+    },
+    body: item => {
+      this.#unequip(this.equipment.body[0]);
+      this.#equip.item(item);
+    },
+    gloves: item => {
+      this.#unequip(this.equipment.gloves[0]);
+      this.#equip.item(item);
+    },
+    boots: item => {
+      this.#unequip(this.equipment.boots[0]);
+      this.#equip.item(item);
+    },
+    ring: item => {
+      if (this.equipment.rings.length > 2) this.#unequip(this.equipment.rings[0]);
+      this.#equip.item(item);
+    },
+    item: item => {
+      this.equipment.push(item);
+      item.equipped = true;
+      this.#equipmentChangeEvent(item.category);
+    },
+  };
+
+  #unequip(item) {
+    if (!item) return;
+    this.equipment.splice(this.equipment.indexOf(item), 1);
+    item.equipped = false;
+    this.#equipmentChangeEvent();
+  }
+
+  #equipmentChangeEvent(category) {
+    this.inventory.sort((a, b) => {
+      if (!a.equipped && !b.equipped) return 0;
+      if (b.equipped) return 1;
+      if (a.equipped) return -1;
+    });
+    this.dispatchEvent(new CustomEvent('equipment-change', { detail: category }));
   }
 
   usePress(event) {

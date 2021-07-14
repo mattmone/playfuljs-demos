@@ -28,3 +28,8 @@ export const clamp = (value, min, max) => {
   if (value > max) return max;
   return value;
 };
+
+export const dieDisplay = (sides = 2, times = 1) => {
+  if (sides === 1) return times;
+  return `${times}d${sides} (${times}-${times * sides})`;
+};
