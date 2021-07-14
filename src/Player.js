@@ -1,6 +1,7 @@
 import { Bitmap } from './Bitmap.js';
 import { EFFECTS, MOBILE } from './constants.js';
 import { Items } from './Items/Items.js';
+import { equipmentSort } from './utils.js';
 export class Player extends EventTarget {
   /** @property {Number} #level */
   #level = 1;
@@ -172,6 +173,10 @@ export class Player extends EventTarget {
     this.#equip[item.category](item);
   }
 
+  unequipItem(item) {
+    this.#unequip(item);
+  }
+
   equipment = new Items();
   inventory = new Items();
 
@@ -206,7 +211,7 @@ export class Player extends EventTarget {
       this.#equip.item(item);
     },
     ring: item => {
-      if (this.equipment.rings.length > 2) this.#unequip(this.equipment.rings[0]);
+      if (this.equipment.rings.length >= 2) this.#unequip(this.equipment.rings[0]);
       this.#equip.item(item);
     },
     item: item => {
@@ -217,18 +222,14 @@ export class Player extends EventTarget {
   };
 
   #unequip(item) {
-    if (!item) return;
+    if (!item || !this.equipment.includes(item)) return;
     this.equipment.splice(this.equipment.indexOf(item), 1);
     item.equipped = false;
     this.#equipmentChangeEvent();
   }
 
   #equipmentChangeEvent(category) {
-    this.inventory.sort((a, b) => {
-      if (!a.equipped && !b.equipped) return 0;
-      if (b.equipped) return 1;
-      if (a.equipped) return -1;
-    });
+    this.inventory.sort(equipmentSort);
     this.dispatchEvent(new CustomEvent('equipment-change', { detail: category }));
   }
 

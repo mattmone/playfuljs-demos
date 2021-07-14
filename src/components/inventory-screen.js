@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'https://unpkg.com/lit-dist/dist/lit.js';
-import { dieDisplay, clamp } from '../utils.js';
+import { dieDisplay, clamp, equipmentSort } from '../utils.js';
 import { Items } from '../Items/Items.js';
 
 class InventoryScreen extends LitElement {
@@ -102,6 +102,8 @@ class InventoryScreen extends LitElement {
         padding: 8px 16px;
         display: grid;
         place-items: center;
+        font-family: 'VT323';
+        font-size: 20px;
       }
       #filter {
         display: flex;
@@ -118,6 +120,8 @@ class InventoryScreen extends LitElement {
         flex: 1;
         height: 44px;
         cursor: pointer;
+        font-family: 'VT323';
+        font-size: 20px;
       }
       #filter button[selected] {
         color: black;
@@ -236,15 +240,17 @@ class InventoryScreen extends LitElement {
     document.exitPointerLock();
     this.hidden = false;
     this.view = 'all';
+    this.items.sort(equipmentSort);
   }
   selectItem(item) {
     this.selection = item;
   }
 
   removeItem(item) {
+    this.dispatchEvent(new CustomEvent('unequip-item', { detail: item }));
     const itemIndex = this.items.indexOf(item);
     this.items.splice(itemIndex, 1);
-    this.selection = this.items[clamp(itemIndex, 0, this.items.length[-1])];
+    this.selection = this.items[clamp(itemIndex, 0, this.items.length[-1])] ?? {};
     this.requestUpdate();
   }
 
@@ -300,7 +306,7 @@ class InventoryScreen extends LitElement {
       <section id="header">
         <button id="close" @click="${this.close}">x</button>
       </section>
-      <section id="selection" ${this.selection}>
+      <section id="selection">
         <h2 id="selection-name">${this.selection.name ?? ''}</h2>
         <img src="${this.selection.image}" id="selection-image" />
         <h3 id="type">${this.selection.type ?? this.selection.category}</h3>

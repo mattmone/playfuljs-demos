@@ -33,3 +33,9 @@ export const dieDisplay = (sides = 2, times = 1) => {
   if (sides === 1) return times;
   return `${times}d${sides} (${times}-${times * sides})`;
 };
+
+export const equipmentSort = (a, b) => {
+  if (!a.equipped && !b.equipped) return 0;
+  if (b.equipped) return 1;
+  if (a.equipped) return -1;
+};

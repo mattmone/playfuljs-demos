@@ -29,6 +29,7 @@ document.querySelector('#enter').addEventListener('click', async () => {
 
   const inventoryScreen = document.querySelector('inventory-screen');
   inventoryScreen.addEventListener('equip-item', ({ detail: item }) => player.equipItem(item));
+  inventoryScreen.addEventListener('unequip-item', ({ detail: item }) => player.unequipItem(item));
 
   controls.addEventListener('toggle-inventory', () => {
     player.toggleInventory();
