@@ -36,6 +36,7 @@ class InventoryScreen extends LitElement {
         backdrop-filter: blur(8px);
         border-radius: 0 0 0 8px;
         overflow: auto;
+        padding: 8px;
       }
       #selection {
         grid-template-rows: 50px 1fr 35px 2fr;
